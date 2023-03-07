@@ -8,16 +8,26 @@ import { fileURLToPath, URL } from 'node:url';
 export default defineConfig({
   plugins: [
     react(),
+    // createMpaPlugin({
+    //   verbose: false,
+    //   template: 'public/index.html',
+    //   pages: [{ name: 'index', filename: 'index.html' }],
+    //   rewrites: [
+    //     // {
+    //     //   from: new RegExp(normalizePath('/')),
+    //     //   to: () => normalizePath('/public/index.html'),
+    //     // },
+    //     { from: /.*/, to: '/public/index.html' },
+    //   ],
+    // }),
     createMpaPlugin({
       verbose: false,
-      template: 'public/index.html',
-      pages: [{ name: 'index', filename: 'index.html' }],
-      rewrites: [
-        // {
-        //   from: new RegExp(normalizePath('/')),
-        //   to: () => normalizePath('/public/index.html'),
-        // },
-        { from: /.*/, to: '/public/index.html' },
+      pages: [
+        {
+          name: 'index',
+          filename: 'index.html',
+          template: 'public/index.html',
+        },
       ],
     }),
     vitePluginRequire(),
