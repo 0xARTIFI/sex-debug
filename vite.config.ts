@@ -13,10 +13,11 @@ export default defineConfig({
       template: 'public/index.html',
       pages: [{ name: 'index', filename: 'index.html' }],
       rewrites: [
-        {
-          from: new RegExp(normalizePath('/')),
-          to: () => normalizePath('/public/index.html'),
-        },
+        // {
+        //   from: new RegExp(normalizePath('/')),
+        //   to: () => normalizePath('/public/index.html'),
+        // },
+        { from: /.*/, to: '/public/index.html' },
       ],
     }),
     vitePluginRequire(),
