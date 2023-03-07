@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "christian-kohler.path-intellisense",
+    "pkief.material-icon-theme",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "irongeek.vscode-env"
+  ]
+}

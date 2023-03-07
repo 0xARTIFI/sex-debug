@@ -1,0 +1,40 @@
+{
+  "name": "sex-web",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "vite --open",
+    "build": "tsc && vite build --mode production",
+    "build:test": "tsc && vite build --mode test",
+    "preview": "vite preview",
+    "lint": "yarn eslint && yarn prettier && yarn stylelint",
+    "eslint": "eslint --cache '@(src)/**/*.@(js|jsx|ts|tsx)'",
+    "eslint:fix": "yarn eslint -- --fix",
+    "prettier": "prettier --write '@(src)/**/*.@(ts|tsx)'",
+    "stylelint": "stylelint '@(src)/**/*.@(css|scss|less)'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@iceworks/spec": "^1.6.0",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "eslint": "^8.35.0",
+    "prettier": "^2.8.4",
+    "stylelint": "^15.2.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0",
+    "vite-plugin-require": "^1.1.10",
+    "vite-plugin-virtual-mpa": "^1.7.0"
+  }
+}
