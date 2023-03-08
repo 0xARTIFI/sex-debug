@@ -1,7 +1,7 @@
 /* eslint-disable @iceworks/best-practices/recommend-functional-component */
 /* eslint-disable @typescript-eslint/member-ordering */
 import * as React from 'react';
-import { fadeConfig } from '@/config/motion';
+import { fadeConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NotificationStackItemProps } from './PropsType';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { fadeConfig } from '@/config/motion';
+import { fadeConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cloneElement } from '../_util/reactNode';
 import useRandomId from '@/hooks/useRandomId';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import IconSpin from '@/assets/images/_global/IconSpin';
-import { fadeConfig } from '../../config/motion';
+import { fadeConfig } from '../../configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cloneElement } from '../_util/reactNode';
 import { ResetFactor } from '../_type/type';

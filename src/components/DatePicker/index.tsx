@@ -6,7 +6,7 @@ import { useClickAway } from 'ahooks';
 import Calendar from './core/DatePicker';
 import RangeCalendar from './core/RangePicker';
 import styled from 'styled-components';
-import { fadeConfig } from '@/config/motion';
+import { fadeConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { t } from '@lingui/macro';
 

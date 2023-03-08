@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import { fadeConfig } from '@/config/motion';
+import { fadeConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cloneElement } from '../_util/reactNode';
 import { Scrollbar, Input } from '@/components';

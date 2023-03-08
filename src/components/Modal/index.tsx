@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import { maskConfig, modalConfig } from '@/config/motion';
+import { maskConfig, modalConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RemoveScroll } from 'react-remove-scroll';
 import { cloneElement } from '../_util/reactNode';
