@@ -1,10 +1,8 @@
 import { GlobalStyle } from '@/assets/styles/global';
-import { getDefaultProvider } from 'ethers';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { createClient, WagmiConfig } from 'wagmi';
 import WalletModal from './components/WalletModal';
-// import { WalletModal } from './components';
+import { client, WagmiConfig } from './config/wallet';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -102,11 +100,6 @@ const Wrapper = styled.div`
     }
   }
 `;
-
-const client = createClient({
-  autoConnect: true,
-  provider: getDefaultProvider(),
-});
 
 function App() {
   const [count, setCount] = useState(0);
