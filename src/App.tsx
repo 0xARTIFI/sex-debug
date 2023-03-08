@@ -67,6 +67,8 @@ const Wrapper = styled.div`
   }
 
   button {
+    display: block;
+    margin: 0 auto 24px auto;
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
