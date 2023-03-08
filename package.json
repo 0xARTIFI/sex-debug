@@ -32,7 +32,7 @@
     "react-remove-scroll": "^2.5.5",
     "react-router-dom": "^6.8.2",
     "recoil": "^0.7.7",
-    "styled-components": "^5.3.8"
+    "styled-components": "^6.0.0-beta.12"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.4",
@@ -40,7 +40,6 @@
     "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
-    "@types/styled-components": "^5.1.26",
     "@vitejs/plugin-react-swc": "^3.0.0",
     "eslint": "^8.35.0",
     "prettier": "^2.8.4",
@@ -49,5 +48,8 @@
     "vite": "^4.1.0",
     "vite-plugin-require": "^1.1.10",
     "vite-plugin-virtual-mpa": "^1.7.0"
+  },
+  "resolutions": {
+    "styled-components": "^5.3.8"
   }
 }
