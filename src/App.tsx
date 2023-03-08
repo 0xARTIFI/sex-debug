@@ -1,8 +1,8 @@
 import { GlobalStyle } from '@/assets/styles/global';
+import { client, WagmiConfig } from '@/configs/wallet';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import WalletModal from './components/WalletModal';
-import { client, WagmiConfig } from './config/wallet';
 
 const Wrapper = styled.div`
   width: 100%;
