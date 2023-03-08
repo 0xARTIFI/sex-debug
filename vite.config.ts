@@ -20,16 +20,16 @@ export default defineConfig({
         { from: /.*/, to: '/public/index.html' },
       ],
     }),
-    createMpaPlugin({
-      verbose: false,
-      pages: [
-        {
-          name: 'index',
-          filename: 'index.html',
-          template: 'public/index.html',
-        },
-      ],
-    }),
+    // createMpaPlugin({
+    //   verbose: false,
+    //   pages: [
+    //     {
+    //       name: 'index',
+    //       filename: 'index.html',
+    //       template: 'public/index.html',
+    //     },
+    //   ],
+    // }),
     vitePluginRequire(),
   ],
   resolve: {
