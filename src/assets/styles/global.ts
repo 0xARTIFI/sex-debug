@@ -38,20 +38,6 @@ export const GlobalStyle = styled.createGlobalStyle`
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
-  /* -----------------  涨跌状态  ----------------- */
-  .up {
-    color: #00ba6c !important;
-    fill: #00ba6c !important;
-  }
-  .initial {
-    color: ${(props) => props.theme.textColorPrimary} !important;
-    transition: all 0.3s ease-in-out;
-  }
-  .down {
-    color: #e55d75 !important;
-    fill: #e55d75 !important;
-  }
-  /* -----------------  涨跌状态  ----------------- */
   /* flex */
   .row-start {
     display: flex;
