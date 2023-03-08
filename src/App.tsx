@@ -1,6 +1,7 @@
 import { GlobalStyle } from '@/assets/styles/global';
 import { client, WagmiConfig } from '@/configs/wallet';
 import React, { useState } from 'react';
+import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
 import WalletModal from './components/WalletModal';
 
@@ -106,12 +107,14 @@ function App() {
 
   return (
     <React.Fragment>
-      <WagmiConfig client={client}>
-        <GlobalStyle />
-        <Wrapper className="col-center">
-          <WalletModal />
-        </Wrapper>
-      </WagmiConfig>
+      <RecoilRoot>
+        <WagmiConfig client={client}>
+          <GlobalStyle />
+          <Wrapper className="col-center">
+            <WalletModal />
+          </Wrapper>
+        </WagmiConfig>
+      </RecoilRoot>
     </React.Fragment>
   );
 }
