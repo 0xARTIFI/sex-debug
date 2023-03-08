@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
 import { GlobalStyle } from '@/assets/styles/global';
-import reactLogo from '@/assets/react.svg';
-import viteLogo from '@/assets/vite.svg';
+import { getDefaultProvider } from 'ethers';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { createClient, WagmiConfig } from 'wagmi';
+import WalletModal from './components/WalletModal';
+// import { WalletModal } from './components';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -101,30 +103,22 @@ const Wrapper = styled.div`
   }
 `;
 
+const client = createClient({
+  autoConnect: true,
+  provider: getDefaultProvider(),
+});
+
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <React.Fragment>
-      <GlobalStyle />
-      <Wrapper className="col-center">
-        <div className="row-center">
-          <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((v) => v + 1)}>count is {count}</button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-      </Wrapper>
+      <WagmiConfig client={client}>
+        <GlobalStyle />
+        <Wrapper className="col-center">
+          <WalletModal />
+        </Wrapper>
+      </WagmiConfig>
     </React.Fragment>
   );
 }
