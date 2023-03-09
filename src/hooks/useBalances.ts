@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import { USDCContract, WETHContract } from '@/configs/contracts';
+import { USDCContract, WETHContract } from '@/configs/common';
 import { recoilBalances } from '@/models/_global';
 import { BalancesEnum } from '@/models/_global/types';
 import { Address, fetchBalance, multicall } from '@wagmi/core';

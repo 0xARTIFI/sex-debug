@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
-import { BalancesEnum, BalancesInterface } from './types';
+import { BalancesEnum } from '@/typings/_global';
+import type { BalancesInterface } from '@/typings/_global';
 
 export const recoilBalances = atom<BalancesInterface>({
   key: 'balances',
