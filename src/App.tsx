@@ -3,7 +3,7 @@ import { client, WagmiConfig } from '@/configs/wallet';
 import React, { useState } from 'react';
 import { RecoilRoot } from 'recoil';
 import styled from 'styled-components';
-import WalletModal from './components/WalletModal';
+import { WalletModal } from '@/components/_global';
 
 const Wrapper = styled.div`
   width: 100%;
