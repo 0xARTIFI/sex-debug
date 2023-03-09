@@ -120,3 +120,17 @@ String.prototype.toBFixed = function (_decimal = 2) {
 
   return temp.toFixed(decimal, BigNumber.ROUND_DOWN);
 };
+
+String.prototype.toBFixed = function (_decimal = 2) {
+  const temp = BigNumber(this.toString());
+  if (temp.isNaN()) return this;
+
+  // 2.0034
+  const str = temp.toString();
+  const fraction = str.includes('.') ? str.split('.')[1] : '';
+  // 整数
+  if (!fraction) return str;
+  const decimal = fraction.split('').findIndex((i) => i !== '0') + _decimal;
+
+  return temp.toFixed(decimal, BigNumber.ROUND_DOWN);
+};

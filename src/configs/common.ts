@@ -37,8 +37,8 @@ export enum BalancesEnum {
   ETH_IN_WALLET = 'ETH_IN_WALLET',
   WETH_IN_WALLET = 'WETH_IN_WALLET',
   USDC_IN_WALLET = 'USDC_IN_WALLET',
-  WETH_IN_ACCOUNT = 'ETH_IN_ACCOUNT',
-  UDSC_IN_ACCOUNT = 'UDSC_IN_ACCOUNT',
+  WETH_IN_ACCOUNT = 'WETH_IN_ACCOUNT',
+  USDC_IN_ACCOUNT = 'USDC_IN_ACCOUNT',
 }
 
 export enum AllowancesEnum {
@@ -49,6 +49,8 @@ export enum AllowancesEnum {
 export enum TRADE_DIRECTION_ENUM {
   LONG = 'LONG',
   SHORT = 'SHORT',
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
 }
 
 export enum TRADE_TOKEN {

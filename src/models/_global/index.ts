@@ -2,13 +2,13 @@ import { BalancesEnum, TRADE_DIRECTION_ENUM } from '@/configs/common';
 import type { BalancesInterface, PositionsInterface } from '@/typings/_global';
 import { atom } from 'recoil';
 
-export const recoilBalances = atom<BalancesInterface>({
+export const recoilBalances = atom<BalancesInterface & { loading: boolean }>({
   key: 'balances',
   default: {
     [BalancesEnum.ETH_IN_WALLET]: '0',
     [BalancesEnum.WETH_IN_WALLET]: '0',
     [BalancesEnum.USDC_IN_WALLET]: '0',
-    [BalancesEnum.UDSC_IN_ACCOUNT]: '0',
+    [BalancesEnum.USDC_IN_ACCOUNT]: '0',
     [BalancesEnum.WETH_IN_ACCOUNT]: '0',
     loading: false,
   },

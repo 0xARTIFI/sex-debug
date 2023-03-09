@@ -1,18 +1,18 @@
-import { useAccount } from 'wagmi';
+import { injectedConnector } from '@/configs/wallet';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 
-enum STATUS {
-  connected = 'connected',
-  reconnecting = 'reconnecting',
-  connecting = 'connecting',
-  disconnected = 'disconnected',
-}
 const useAuth = (needStatus?: boolean | undefined) => {
-  const { address, status } = useAccount();
+  const { address, status, isConnected, isConnecting, isDisconnected } = useAccount();
+
+  const { connect } = useConnect({
+    connector: injectedConnector,
+  });
+  const { disconnect } = useDisconnect();
 
   if (needStatus) {
-    return status;
+    return { address, status, isConnected, isConnecting, isDisconnected, disconnect, connect };
   }
-  return !!address;
+  return { isConnected, connect, disconnect };
 };
 
 export default useAuth;

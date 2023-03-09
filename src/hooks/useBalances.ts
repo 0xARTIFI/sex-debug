@@ -7,43 +7,45 @@ import { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
 
+let hasRuned = false;
+
 const useBalances = () => {
   const { address } = useAccount();
   const setBalances = useSetRecoilState(recoilBalances);
 
-  const balancesCall = async (innerAccount: Address) => {
+  const balancesCall = async () => {
     return Promise.all([
       multicall({
         contracts: [
           {
             ...USDCContract,
             functionName: 'balanceOf',
-            args: [innerAccount],
+            args: [address as Address],
           },
           {
             ...WETHContract,
             functionName: 'balanceOf',
-            args: [innerAccount],
+            args: [address as Address],
           },
           {
             ...exchangeContract,
             functionName: 'traderBalanceUSDC',
-            args: [innerAccount],
+            args: [address],
           },
           {
             ...exchangeContract,
             functionName: 'traderBalanceWETH',
-            args: [innerAccount],
+            args: [address],
           },
         ],
       }),
       fetchBalance({
-        address: innerAccount,
+        address: address as Address,
       }),
     ]);
   };
 
-  const { run, data, loading } = useRequest((account) => balancesCall(account), {
+  const { run, data, loading, cancel } = useRequest(() => balancesCall(), {
     manual: true,
   });
 
@@ -67,12 +69,6 @@ const useBalances = () => {
     }
   }, [loading, setBalances]);
 
-  useEffect(() => {
-    if (address) {
-      run(address);
-    }
-  }, [address, run]);
-
   const saveBalances = useCallback(() => {
     if (!data?.length || !data[0]?.length) return;
 
@@ -90,10 +86,17 @@ const useBalances = () => {
         [BalancesEnum.WETH_IN_WALLET]: wethBalance,
         [BalancesEnum.USDC_IN_WALLET]: usdcBalance,
         [BalancesEnum.WETH_IN_ACCOUNT]: traderBalanceWETH,
-        [BalancesEnum.UDSC_IN_ACCOUNT]: traderBalanceUSDC,
+        [BalancesEnum.USDC_IN_ACCOUNT]: traderBalanceUSDC,
       };
     });
   }, [data, setBalances]);
+
+  useEffect(() => {
+    if (address && !hasRuned) {
+      hasRuned = true;
+      run();
+    }
+  }, [address, run]);
 
   useEffect(() => {
     if (data) {
@@ -101,9 +104,12 @@ const useBalances = () => {
     }
   }, [data, saveBalances]);
 
-  console.log('data', data);
+  // useUnmount(() => {
+  //   cancel();
+  //   hasRuned = false;
+  // });
 
-  return null;
+  return { run };
 };
 
 export default useBalances;

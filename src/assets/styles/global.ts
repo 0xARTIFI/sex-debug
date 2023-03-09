@@ -87,4 +87,7 @@ export const GlobalStyle = styled.createGlobalStyle`
     align-items: center;
     justify-content: flex-end;
   }
+  .full-width {
+    width: 100%;
+  }
 `;

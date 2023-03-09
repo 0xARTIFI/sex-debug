@@ -1,7 +1,7 @@
 import { LeverageLongContaact, LeverageShortContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
 import { recoilPositions } from '@/models/_global';
 import { PositionsInterface } from '@/typings/_global';
-import { Address, multicall } from '@wagmi/core';
+import { multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
@@ -11,13 +11,14 @@ import { useAccount } from 'wagmi';
 
 // 强平保证金率
 const liqRate = 0.02;
+let hasRuned = false;
 
 const useFetchPositions = ({ futurePrice = 0 }: any) => {
   const setPositions = useSetRecoilState(recoilPositions);
   const { address } = useAccount();
 
   // multicall 方法
-  const multiCallUserInfo = async (account: Address) => {
+  const multiCallUserInfo = async () => {
     // const multicall = new Multicall({
     //   ethersProvider: provider,
     //   tryAggregate: true,
@@ -28,12 +29,12 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
         {
           ...LeverageLongContaact,
           functionName: 'traderPosition',
-          args: [account],
+          args: [address],
         },
         {
           ...LeverageShortContract,
           functionName: 'traderPosition',
-          args: [account],
+          args: [address],
         },
       ],
     });
@@ -64,13 +65,7 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
     };
   };
 
-  const { run, data } = useRequest(multiCallUserInfo, { manual: true, pollingInterval: 50000 });
-
-  useEffect(() => {
-    if (address) {
-      run(address);
-    }
-  }, [address]);
+  const { run, data } = useRequest(multiCallUserInfo, { manual: true });
 
   // 数据处理
   const longPosition = useMemo(() => data?.LONG, [data]);
@@ -223,6 +218,17 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
 
     return params;
   }, [futurePrice, shortPosition]);
+
+  useEffect(() => {
+    if (address && !hasRuned) {
+      hasRuned = true;
+      run();
+    }
+  }, [address, run]);
+
+  // useUnmount(() => {
+  //   hasRuned = false;
+  // });
 
   return {
     longPosition: longPositionParams,

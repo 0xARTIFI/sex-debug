@@ -6,7 +6,7 @@ import { isProd } from './common';
 
 const chainId = isProd ? [arbitrum] : [arbitrumGoerli];
 
-const injectedConnector = new InjectedConnector({
+export const injectedConnector = new InjectedConnector({
   chains: [...chainId],
 });
 
@@ -16,7 +16,13 @@ const client = createClient({
   autoConnect: true,
   connectors: [injectedConnector],
   provider,
+  // provider: getDefaultProvider(),
   webSocketProvider,
 });
+
+console.log('client', client);
+// const client = createClient({
+//   provider: Object.assign(getDefaultProvider(), { chains: chainId }),
+// });
 
 export { client, WagmiConfig };

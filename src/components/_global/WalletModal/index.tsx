@@ -1,27 +1,30 @@
-import { Button } from '@/components';
-import { BalancesEnum } from '@/configs/common';
+import { injectedConnector } from '@/configs/wallet';
 import useAuth from '@/hooks/useAuth';
 import useBalances from '@/hooks/useBalances';
-import useFetchPositions from '@/hooks/useFetchPositions';
+import useChainWatcher from '@/hooks/useChainWatcher';
 import { recoilBalances } from '@/models/_global';
-import { ethers } from 'ethers';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi';
+import SmartButton from '../SmartButton';
 
 const Wrapper = styled.div`
   button {
-    margin: 200px auto;
     width: 200px;
+  }
+  .gap {
+    gap: 20px;
   }
 `;
 
 function WalletModal() {
   useAuth();
   const { address, isConnected } = useAccount();
+  const { chain, chains } = useNetwork();
+  const { setupNetwork, unsupported } = useChainWatcher();
+
   const { connect } = useConnect({
-    connector: new InjectedConnector(),
+    connector: injectedConnector,
   });
   const { disconnect } = useDisconnect();
 
@@ -29,41 +32,35 @@ function WalletModal() {
 
   useBalances();
 
-  const { longPosition, shortPosition, run } = useFetchPositions({ futurePrice: 0 });
+  // const { longPosition, shortPosition, run } = useFetchPositions({ futurePrice: 0 });
 
-  console.log('longPositionParams', longPosition, shortPosition);
+  // console.log('longPositionParams', longPosition, shortPosition);
 
   if (isConnected) {
     return (
-      <Wrapper>
-        Loading: {JSON.stringify(balances['loading'])}
+      <Wrapper className="full-width col-center">
+        <div className="row-between gap">
+          <SmartButton style={{ color: '#fff' }} onClick={() => disconnect()}>
+            Disconnect
+          </SmartButton>
+          {unsupported ? (
+            <SmartButton style={{ color: '#fff' }} onClick={setupNetwork}>
+              Switch
+            </SmartButton>
+          ) : null}
+        </div>
         <br />
-        ETH: {balances[BalancesEnum.ETH_IN_WALLET]}
+        <span>Connected to {address}</span>
         <br />
-        USDC_IN_WALLET: {ethers.utils.formatUnits(balances[BalancesEnum.USDC_IN_WALLET], 18)}
-        <br />
-        WETH_IN_WALLET: {ethers.utils.formatUnits(balances[BalancesEnum.WETH_IN_WALLET], 18)}
-        <br />
-        <br />
-        LONG: <br />
-        {JSON.stringify(longPosition, null, 2)}
-        <br />
-        SHORT: <br />
-        {JSON.stringify(shortPosition, null, 2)}
-        <br />
-        <br />
-        Connected to {address}
-        <Button style={{ color: '#fff' }} onClick={() => disconnect()}>
-          Disconnect
-        </Button>
+        <span>ChainId {chain?.id}</span>
       </Wrapper>
     );
   }
   return (
     <Wrapper>
-      <Button style={{ color: '#fff' }} onClick={() => connect()}>
+      <SmartButton style={{ color: '#fff' }} onClick={() => connect()}>
         Connect Wallet
-      </Button>
+      </SmartButton>
     </Wrapper>
   );
 }
