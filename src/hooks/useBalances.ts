@@ -4,12 +4,12 @@ import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
 import { useCallback, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
 
 const useBalances = () => {
   const { address } = useAccount();
-  const [, setBalances] = useRecoilState(recoilBalances);
+  const setBalances = useSetRecoilState(recoilBalances);
 
   const balancesCall = async (innerAccount: Address) => {
     return Promise.all([
