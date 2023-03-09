@@ -7,7 +7,7 @@ const SmartButton = ({ children, onClick, loading, ...props }: any) => {
   const { setupNetwork, unsupported, isLoading } = useChainWatcher();
   const { isConnected, connect } = useAuth();
 
-  const handleClick = () => {
+  const handleClick = (e: any) => {
     if (!isConnected) {
       connect();
       return;
@@ -16,7 +16,7 @@ const SmartButton = ({ children, onClick, loading, ...props }: any) => {
       setupNetwork();
       return;
     }
-    onClick && onClick();
+    onClick && onClick(e);
   };
   return (
     <Button {...props} onClick={handleClick} loading={isLoading || loading}>
