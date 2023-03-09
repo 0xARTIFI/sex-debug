@@ -55,13 +55,13 @@ const useBalances = () => {
         };
       });
     }
-  }, [loading]);
+  }, [loading, setBalances]);
 
   useEffect(() => {
     if (address) {
       run(address);
     }
-  }, [address]);
+  }, [address, run]);
 
   const saveBalances = useCallback(() => {
     if (!data?.length || !data[0]?.length) return;
@@ -79,16 +79,17 @@ const useBalances = () => {
         [BalancesEnum.USDC_IN_WALLET]: usdcBalance,
       };
     });
-  }, [data]);
+  }, [data, setBalances]);
 
   useEffect(() => {
     if (data) {
       saveBalances();
     }
-  }, [data]);
+  }, [data, saveBalances]);
 
   console.log('data', data);
 
   return null;
 };
+
 export default useBalances;
