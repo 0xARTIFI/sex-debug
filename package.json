@@ -53,8 +53,5 @@
     "vite-plugin-node-polyfills": "^0.7.0",
     "vite-plugin-require": "^1.1.10",
     "vite-plugin-virtual-mpa": "^1.7.0"
-  },
-  "resolutions": {
-    "styled-components": "^5.3.8"
   }
 }

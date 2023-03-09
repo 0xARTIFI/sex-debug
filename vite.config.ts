@@ -1,4 +1,4 @@
-import { defineConfig, normalizePath } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { createMpaPlugin } from 'vite-plugin-virtual-mpa';
 import vitePluginRequire from 'vite-plugin-require';
@@ -13,13 +13,7 @@ export default defineConfig({
       verbose: false,
       template: 'public/index.html',
       pages: [{ name: 'index', filename: 'index.html' }],
-      rewrites: [
-        // {
-        //   from: new RegExp(normalizePath('/')),
-        //   to: () => normalizePath('/public/index.html'),
-        // },
-        { from: /.*/, to: '/public/index.html' },
-      ],
+      rewrites: [{ from: /.*/, to: '/public/index.html' }],
     }),
     // createMpaPlugin({
     //   verbose: false,
