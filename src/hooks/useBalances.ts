@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import { USDCContract, WETHContract } from '@/configs/common';
 import { recoilBalances } from '@/models/_global';
-import { BalancesEnum } from '@/models/_global/types';
+import { BalancesEnum } from '@/typings/_global';
 import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';

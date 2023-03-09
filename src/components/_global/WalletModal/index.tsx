@@ -1,6 +1,6 @@
 import useBalances from '@/hooks/useBalances';
 import { recoilBalances } from '@/models/_global';
-import { BalancesEnum } from '@/models/_global/types';
+import { BalancesEnum } from '@/typings/_global';
 import { useRecoilState } from 'recoil';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
