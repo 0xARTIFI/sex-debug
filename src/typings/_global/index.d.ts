@@ -4,9 +4,8 @@ export interface BalancesInterface {
   [BalancesEnum.ETH_IN_WALLET]: string;
   [BalancesEnum.WETH_IN_WALLET]: string;
   [BalancesEnum.USDC_IN_WALLET]: string;
-  [BalancesEnum.USDC_IN_OPTION_ACCOUNT]: string;
-  [BalancesEnum.ETH_IN_PERPETUAL_ACCOUNT]: string;
-  [BalancesEnum.UDSC_IN_PERPETUAL_ACCOUNT]: string;
+  [BalancesEnum.UDSC_IN_ACCOUNT]: string;
+  [BalancesEnum.WETH_IN_ACCOUNT]: string;
   loading: boolean;
 }
 
@@ -39,3 +38,6 @@ export interface Error {
   name: string;
   stack?: string;
 }
+
+export type USDCAmount = number | string;
+export type WETHAmount = number | string;

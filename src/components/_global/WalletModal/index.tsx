@@ -40,9 +40,9 @@ function WalletModal() {
         <br />
         ETH: {balances[BalancesEnum.ETH_IN_WALLET]}
         <br />
-        USDC: {ethers.utils.formatUnits(balances[BalancesEnum.USDC_IN_WALLET], 18)}
+        USDC_IN_WALLET: {ethers.utils.formatUnits(balances[BalancesEnum.USDC_IN_WALLET], 18)}
         <br />
-        WETH: {ethers.utils.formatUnits(balances[BalancesEnum.WETH_IN_WALLET], 18)}
+        WETH_IN_WALLET: {ethers.utils.formatUnits(balances[BalancesEnum.WETH_IN_WALLET], 18)}
         <br />
         <br />
         LONG: <br />

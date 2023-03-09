@@ -1,4 +1,4 @@
-import { USDCContract, WETHContract, BalancesEnum } from '@/configs/common';
+import { BalancesEnum, exchangeContract, USDCContract, WETHContract } from '@/configs/common';
 import { recoilBalances } from '@/models/_global';
 import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
@@ -23,6 +23,16 @@ const useBalances = () => {
           {
             ...WETHContract,
             functionName: 'balanceOf',
+            args: [innerAccount],
+          },
+          {
+            ...exchangeContract,
+            functionName: 'traderBalanceUSDC',
+            args: [innerAccount],
+          },
+          {
+            ...exchangeContract,
+            functionName: 'traderBalanceWETH',
             args: [innerAccount],
           },
         ],
@@ -66,8 +76,10 @@ const useBalances = () => {
   const saveBalances = useCallback(() => {
     if (!data?.length || !data[0]?.length) return;
 
-    const wethBalance = ethers.BigNumber.from(data[0][0]).toString();
-    const usdcBalance = ethers.BigNumber.from(data[0][1]).toString();
+    const usdcBalance = ethers.BigNumber.from(data[0][0]).toString();
+    const wethBalance = ethers.BigNumber.from(data[0][1]).toString();
+    const traderBalanceUSDC = ethers.BigNumber.from(data[0][2]).toString();
+    const traderBalanceWETH = ethers.BigNumber.from(data[0][3]).toString();
 
     const ethBalance = data[1]?.formatted;
     setBalances((old) => {
@@ -77,6 +89,8 @@ const useBalances = () => {
         [BalancesEnum.ETH_IN_WALLET]: ethBalance,
         [BalancesEnum.WETH_IN_WALLET]: wethBalance,
         [BalancesEnum.USDC_IN_WALLET]: usdcBalance,
+        [BalancesEnum.WETH_IN_ACCOUNT]: traderBalanceWETH,
+        [BalancesEnum.UDSC_IN_ACCOUNT]: traderBalanceUSDC,
       };
     });
   }, [data, setBalances]);

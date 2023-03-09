@@ -4,3 +4,11 @@ declare module '*.module.css' {
   const classes: { [key: string]: string };
   export default classes;
 }
+
+interface String {
+  toBFixed: any;
+}
+
+interface Number {
+  toBFixed: any;
+}
