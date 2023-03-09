@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-shadow */
-import { USDCContract, WETHContract } from '@/configs/common';
+import { USDCContract, WETHContract, BalancesEnum } from '@/configs/common';
 import { recoilBalances } from '@/models/_global';
-import { BalancesEnum } from '@/typings/_global';
 import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
@@ -12,6 +10,7 @@ import { useAccount } from 'wagmi';
 const useBalances = () => {
   const { address } = useAccount();
   const [, setBalances] = useRecoilState(recoilBalances);
+
   const balancesCall = async (innerAccount: Address) => {
     return Promise.all([
       multicall({
@@ -34,7 +33,7 @@ const useBalances = () => {
     ]);
   };
 
-  const { run, data, loading, error } = useRequest((account) => balancesCall(account), {
+  const { run, data, loading } = useRequest((account) => balancesCall(account), {
     manual: true,
   });
 
@@ -57,6 +56,7 @@ const useBalances = () => {
       });
     }
   }, [loading]);
+
   useEffect(() => {
     if (address) {
       run(address);

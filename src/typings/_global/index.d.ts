@@ -1,16 +1,4 @@
-export enum BalancesEnum {
-  ETH_IN_WALLET = 'ETH_IN_WALLET',
-  WETH_IN_WALLET = 'WETH_IN_WALLET',
-  USDC_IN_WALLET = 'USDC_IN_WALLET',
-  USDC_IN_OPTION_ACCOUNT = 'USDC_IN_OPTION_ACCOUNT',
-  ETH_IN_PERPETUAL_ACCOUNT = 'ETH_IN_PERPETUAL_ACCOUNT',
-  UDSC_IN_PERPETUAL_ACCOUNT = 'UDSC_IN_PERPETUAL_ACCOUNT',
-}
-
-export enum AllowancesEnum {
-  WETH_IN_WALLET_ALLOWANCE = 'WETH_IN_WALLET_ALLOWANCE',
-  USDC_IN_WALLET_ALLOWANCE = 'USDC_IN_WALLET_ALLOWANCE',
-}
+import { BalancesEnum, AllowancesEnum } from '@/configs/common';
 
 export interface BalancesInterface {
   [BalancesEnum.ETH_IN_WALLET]: string;
