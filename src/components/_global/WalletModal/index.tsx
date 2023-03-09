@@ -1,11 +1,13 @@
-import { useRecoilState } from 'recoil';
+import { Button } from '@/components';
+import { BalancesEnum } from '@/configs/common';
+import useAuth from '@/hooks/useAuth';
 import useBalances from '@/hooks/useBalances';
 import { recoilBalances } from '@/models/_global';
-import { BalancesEnum } from '@/configs/common';
+import { ethers } from 'ethers';
+import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-import { Button } from '@/components';
-import styled from 'styled-components';
 
 const Wrapper = styled.div`
   button {
@@ -15,6 +17,7 @@ const Wrapper = styled.div`
 `;
 
 function WalletModal() {
+  useAuth();
   const { address, isConnected } = useAccount();
   const { connect } = useConnect({
     connector: new InjectedConnector(),
@@ -32,9 +35,9 @@ function WalletModal() {
         <br />
         ETH: {balances[BalancesEnum.ETH_IN_WALLET]}
         <br />
-        USDC: {balances[BalancesEnum.USDC_IN_WALLET]}
+        USDC: {ethers.utils.formatUnits(balances[BalancesEnum.USDC_IN_WALLET], 18)}
         <br />
-        WETH: {balances[BalancesEnum.WETH_IN_WALLET]}
+        WETH: {ethers.utils.formatUnits(balances[BalancesEnum.WETH_IN_WALLET], 18)}
         <br />
         <br />
         Connected to {address}
