@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { tuple } from '../_type/type';
 import { cloneElement } from '../_util/reactNode';
-import IconSpin from '@/assets/images/_global/IconSpin';
+import { IconGlobalSpin } from '@/assets/icons/IconGroup';
 import styled from 'styled-components';
 
 const Wrapper = styled.button`
@@ -132,7 +132,7 @@ const Wrapper = styled.button`
 
 const ButtonTypes = tuple('primary', 'second', 'third', 'solid', 'text', 'danger');
 
-type ButtonType = typeof ButtonTypes[number];
+type ButtonType = (typeof ButtonTypes)[number];
 
 type SizeType = 'sm' | 'md' | 'lg';
 
@@ -191,7 +191,7 @@ const Button: React.FC<ButtonProps> = React.forwardRef((props: ButtonProps, ref:
   return (
     <Wrapper className={classes} ref={ref} onClick={handleClick} {...rest}>
       {prefix}
-      {!disabled && loading && <IconSpin color={loadingColor} />}
+      {!disabled && loading && <IconGlobalSpin color={loadingColor} />}
       <span>{cloneElement(children)}</span>
       {suffix}
     </Wrapper>

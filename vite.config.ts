@@ -2,6 +2,7 @@ import { defineConfig, normalizePath } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { createMpaPlugin } from 'vite-plugin-virtual-mpa';
 import vitePluginRequire from 'vite-plugin-require';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
@@ -31,6 +32,7 @@ export default defineConfig({
     //   ],
     // }),
     vitePluginRequire(),
+    nodePolyfills({ protocolImports: true }),
   ],
   resolve: {
     alias: {
