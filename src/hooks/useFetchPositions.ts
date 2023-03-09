@@ -1,101 +1,78 @@
+import { LeverageLongContaact, LeverageShortContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
+import { recoilPositions } from '@/models/_global';
+import { PositionsInterface } from '@/typings/_global';
+import { Address, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
-import { ContractCallContext, Multicall } from 'ethereum-multicall';
 import { ethers } from 'ethers';
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
-import { futureLongContractAddr, futureShortContractAddr } from '../config';
-import futureAbi from '../constants/abis/future.json';
-import futureLongAbi from '../constants/abis/futureLong.json';
-import { tradeDirection } from '../pages/future';
 
 // 强平保证金率
 const liqRate = 0.02;
 
-export const useFetchPositionsInit = ({ futurePrice }: any) => {
-  const { address: account } = useAccount();
-  const multiCallUserInfo = async (account: any) => {
-    const { ethereum } = window as any;
+const useFetchPositions = ({ futurePrice = 0 }: any) => {
+  const setPositions = useSetRecoilState(recoilPositions);
+  const { address } = useAccount();
 
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    // const multiCallProvider = new Provider(provider, cid);
-    const multicall = new Multicall({
-      ethersProvider: provider,
-      tryAggregate: true,
+  // multicall 方法
+  const multiCallUserInfo = async (account: Address) => {
+    // const multicall = new Multicall({
+    //   ethersProvider: provider,
+    //   tryAggregate: true,
+    // });
+
+    const positionMultiCallResult: any = await multicall({
+      contracts: [
+        {
+          ...LeverageLongContaact,
+          functionName: 'traderPosition',
+          args: [account],
+        },
+        {
+          ...LeverageShortContract,
+          functionName: 'traderPosition',
+          args: [account],
+        },
+      ],
     });
 
-    const contractCallContext: ContractCallContext[] = [
-      {
-        reference: 'futureShortContract',
-        contractAddress: futureShortContractAddr,
-        abi: futureAbi,
-        calls: [
-          {
-            reference: 'getUserBalance',
-            methodName: 'getUserBalance',
-            methodParameters: [account],
-          },
-          {
-            reference: 'traderPosition',
-            methodName: 'traderPosition',
-            methodParameters: [account],
-          },
-        ],
-      },
-      {
-        reference: 'futureLongContract',
-        contractAddress: futureLongContractAddr,
-        abi: futureLongAbi,
-        calls: [
-          {
-            reference: 'getUserBalance',
-            methodName: 'getUserBalance',
-            methodParameters: [account],
-          },
-          {
-            reference: 'traderPosition',
-            methodName: 'traderPosition',
-            methodParameters: [account],
-          },
-        ],
-      },
-    ];
+    if (!positionMultiCallResult?.length) return null;
 
-    const multiCallResult = await multicall.call(contractCallContext);
-    // 空单仓位
-    const shortFutureContractRes = multiCallResult.results.futureShortContract.callsReturnContext;
     // 多单仓位
-    const longFutureContractRes = multiCallResult.results.futureLongContract.callsReturnContext;
+    const longFutureContractRes: any[] = positionMultiCallResult[0];
+    // 空单仓位
+    const shortFutureContractRes: any[] = positionMultiCallResult[1];
 
     // [开仓均价, 开仓数量, 保证金数量, side]
-    const tempShort = shortFutureContractRes[1]?.returnValues;
-    if (!tempShort.length || !tempShort[1] || !tempShort[2]) return;
-    const entryPriceShort = ethers.BigNumber.from(tempShort[0]).toString();
-    const tokenAmountShort = ethers.utils.formatUnits(tempShort[1], 0)?.toString();
-    const marginAmountShort = ethers.utils.formatUnits(tempShort[2], 6)?.toString();
-    const traderShortPosition = [entryPriceShort, tokenAmountShort, marginAmountShort, tradeDirection.SHORT];
+    if (!longFutureContractRes.length || !longFutureContractRes[1] || !longFutureContractRes[2]) return;
+    const entryPriceLong = ethers.BigNumber.from(longFutureContractRes[0])?.toString();
+    const tokenAmountLong = ethers.utils.formatUnits(longFutureContractRes[1], 0)?.toString();
+    const marginAmountLong = ethers.utils.formatUnits(longFutureContractRes[2], 9)?.toString();
+    const traderLongPosition = [entryPriceLong, tokenAmountLong, marginAmountLong, TRADE_DIRECTION_ENUM.LONG];
 
-    const tempLong = longFutureContractRes[1]?.returnValues;
-    if (!tempLong.length || !tempLong[1] || !tempLong[2]) return;
-    const entryPriceLong = ethers.BigNumber.from(tempLong[0]).toString();
-    const tokenAmountLong = ethers.utils.formatUnits(tempLong[1], 0)?.toString();
-    const marginAmountLong = ethers.utils.formatUnits(tempLong[2], 9)?.toString();
-    const traderLongPosition = [entryPriceLong, tokenAmountLong, marginAmountLong, tradeDirection.LONG];
+    if (!shortFutureContractRes.length || !shortFutureContractRes[1] || !shortFutureContractRes[2]) return;
+    const entryPriceShort = ethers.BigNumber.from(shortFutureContractRes[0])?.toString();
+    const tokenAmountShort = ethers.utils.formatUnits(shortFutureContractRes[1], 0)?.toString();
+    const marginAmountShort = ethers.utils.formatUnits(shortFutureContractRes[2], 6)?.toString();
+    const traderShortPosition = [entryPriceShort, tokenAmountShort, marginAmountShort, TRADE_DIRECTION_ENUM.SHORT];
 
     return {
-      [tradeDirection.LONG]: [...traderLongPosition],
-      [tradeDirection.SHORT]: [...traderShortPosition],
+      [TRADE_DIRECTION_ENUM.LONG]: [...traderLongPosition],
+      [TRADE_DIRECTION_ENUM.SHORT]: [...traderShortPosition],
     };
   };
 
   const { run, data } = useRequest(multiCallUserInfo, { manual: true, pollingInterval: 50000 });
 
   useEffect(() => {
-    if (account) {
-      run(account);
+    if (address) {
+      run(address);
     }
-  }, [account]);
+  }, [address]);
 
+  // 数据处理
   const longPosition = useMemo(() => data?.LONG, [data]);
   const shortPosition = useMemo(() => data?.SHORT, [data]);
 
@@ -107,8 +84,9 @@ export const useFetchPositionsInit = ({ futurePrice }: any) => {
       BigNumber(longPosition[1]).isNaN() ||
       BigNumber(longPosition[1]).lte(0) ||
       !futurePrice
-    )
+    ) {
       return undefined;
+    }
 
     console.table(longPosition);
     const originCurrentPrice = BigNumber(futurePrice).multipliedBy(100).toString();
@@ -157,10 +135,18 @@ export const useFetchPositionsInit = ({ futurePrice }: any) => {
       sizeValue: sizePrice.toString(),
       liqPrice: liqPrice.toString(),
       totalPositionValue: totalPositionValue.toString(),
-      direction: tradeDirection.LONG,
+      direction: TRADE_DIRECTION_ENUM.LONG,
     };
 
     console.table(params);
+
+    setPositions((old: PositionsInterface) => {
+      const _old = JSON.parse(JSON.stringify(old));
+      return {
+        ..._old,
+        [TRADE_DIRECTION_ENUM.LONG]: params,
+      };
+    });
 
     return params;
   }, [futurePrice, longPosition]);
@@ -172,8 +158,9 @@ export const useFetchPositionsInit = ({ futurePrice }: any) => {
       BigNumber(shortPosition[1]).isNaN() ||
       BigNumber(shortPosition[1]).lte(0) ||
       !futurePrice
-    )
+    ) {
       return undefined;
+    }
     console.table(shortPosition);
     const originCurrentPrice = BigNumber(futurePrice).multipliedBy(100).toString();
     const originEntryPrice = shortPosition[0]; // U
@@ -221,10 +208,18 @@ export const useFetchPositionsInit = ({ futurePrice }: any) => {
       sizeValue: sizePrice.toString(),
       liqPrice: liqPrice.toString(),
       totalPositionValue: totalPositionValue.toString(),
-      direction: tradeDirection.SHORT,
+      direction: TRADE_DIRECTION_ENUM.SHORT,
     };
 
     console.table(params);
+
+    setPositions((old: PositionsInterface) => {
+      const _old = JSON.parse(JSON.stringify(old));
+      return {
+        ..._old,
+        [TRADE_DIRECTION_ENUM.SHORT]: params,
+      };
+    });
 
     return params;
   }, [futurePrice, shortPosition]);
@@ -236,9 +231,4 @@ export const useFetchPositionsInit = ({ futurePrice }: any) => {
   };
 };
 
-export const PositionCtx = createContext<any>(null);
-
-export default () => {
-  const ctx = useContext(PositionCtx);
-  return ctx;
-};
+export default useFetchPositions;

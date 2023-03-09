@@ -2,6 +2,7 @@ import { Button } from '@/components';
 import { BalancesEnum } from '@/configs/common';
 import useAuth from '@/hooks/useAuth';
 import useBalances from '@/hooks/useBalances';
+import useFetchPositions from '@/hooks/useFetchPositions';
 import { recoilBalances } from '@/models/_global';
 import { ethers } from 'ethers';
 import { useRecoilState } from 'recoil';
@@ -28,6 +29,10 @@ function WalletModal() {
 
   useBalances();
 
+  const { longPosition, shortPosition, run } = useFetchPositions({ futurePrice: 0 });
+
+  console.log('longPositionParams', longPosition, shortPosition);
+
   if (isConnected) {
     return (
       <Wrapper>
@@ -38,6 +43,13 @@ function WalletModal() {
         USDC: {ethers.utils.formatUnits(balances[BalancesEnum.USDC_IN_WALLET], 18)}
         <br />
         WETH: {ethers.utils.formatUnits(balances[BalancesEnum.WETH_IN_WALLET], 18)}
+        <br />
+        <br />
+        LONG: <br />
+        {JSON.stringify(longPosition, null, 2)}
+        <br />
+        SHORT: <br />
+        {JSON.stringify(shortPosition, null, 2)}
         <br />
         <br />
         Connected to {address}
