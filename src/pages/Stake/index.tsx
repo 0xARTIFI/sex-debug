@@ -3,7 +3,7 @@ import Tabs from '@/components/Tabs';
 import { SmartButton } from '@/components/_global';
 import { TRADE_DIRECTION_ENUM, TRADE_TOKEN } from '@/configs/common';
 import useInputChange from '@/hooks/useInputChange';
-import useTraderDeposit from '@/hooks/useTraderDeposit';
+import useLpDeposit from '@/hooks/useLpDeposit';
 import useTraderWithdraw from '@/hooks/useTraderWithdraw';
 import { recoilBalances } from '@/models/_global';
 import { ethers } from 'ethers';
@@ -32,7 +32,7 @@ const Stake = () => {
   const [payAmount, handleAmountChange] = useInputChange({});
   const balances = useRecoilValue(recoilBalances);
 
-  const { run: depositRun, loading: depositLoading, data: depositData, error: depositError } = useTraderDeposit();
+  const { run: depositRun, loading: depositLoading, data: depositData, error: depositError } = useLpDeposit();
   const { run: withdrawRun, loading: withdrawLoading, data: withdrawData, error: withdrawError } = useTraderWithdraw();
 
   const handleDeposit = (inputToken: TRADE_TOKEN.USDC | TRADE_TOKEN.WETH) => {

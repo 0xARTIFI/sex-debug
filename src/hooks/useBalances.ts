@@ -7,7 +7,7 @@ import { useCallback, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
 
-let hasRuned = false;
+// let hasRuned = false;
 
 const useBalances = () => {
   const { address } = useAccount();
@@ -45,9 +45,10 @@ const useBalances = () => {
     ]);
   };
 
-  const { run, data, loading, cancel } = useRequest(() => balancesCall(), {
+  const { run, data, loading, cancel, error } = useRequest(() => balancesCall(), {
     manual: true,
   });
+  console.log('data', data, error);
 
   useEffect(() => {
     if (loading) {
@@ -91,12 +92,12 @@ const useBalances = () => {
     });
   }, [data, setBalances]);
 
-  useEffect(() => {
-    if (address && !hasRuned) {
-      hasRuned = true;
-      run();
-    }
-  }, [address, run]);
+  // useEffect(() => {
+  //   if (address && !hasRuned) {
+  //     hasRuned = true;
+  //     run();
+  //   }
+  // }, [address, run]);
 
   useEffect(() => {
     if (data) {

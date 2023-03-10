@@ -20,9 +20,4 @@ const client = createClient({
   webSocketProvider,
 });
 
-console.log('client', client);
-// const client = createClient({
-//   provider: Object.assign(getDefaultProvider(), { chains: chainId }),
-// });
-
 export { client, WagmiConfig };

@@ -1,4 +1,5 @@
 import { exchangeContract, TRADE_TOKEN } from '@/configs/common';
+import { getSignatureAndPrice } from '@/server';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import useApprove from './useApprove';
@@ -12,6 +13,9 @@ const useLpDeposit = () => {
     try {
       // 检查allowance
       await approveRun(inputToken, exchangeContract.address, inputValue);
+
+      const signature = await getSignatureAndPrice();
+      console.log('signature', signature);
 
       const config = await prepareWriteContract({
         ...exchangeContract,

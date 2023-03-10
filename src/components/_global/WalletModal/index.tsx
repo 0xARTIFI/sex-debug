@@ -3,6 +3,7 @@ import useAuth from '@/hooks/useAuth';
 import useBalances from '@/hooks/useBalances';
 import useChainWatcher from '@/hooks/useChainWatcher';
 import { recoilBalances } from '@/models/_global';
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { useAccount, useConnect, useDisconnect, useNetwork } from 'wagmi';
@@ -20,7 +21,7 @@ const Wrapper = styled.div`
 function WalletModal() {
   useAuth();
   const { address, isConnected } = useAccount();
-  const { chain, chains } = useNetwork();
+  const { chain } = useNetwork();
   const { setupNetwork, unsupported } = useChainWatcher();
 
   const { connect } = useConnect({
@@ -30,7 +31,13 @@ function WalletModal() {
 
   const [balances] = useRecoilState(recoilBalances);
 
-  useBalances();
+  const { run } = useBalances();
+
+  useEffect(() => {
+    if (address) {
+      run();
+    }
+  }, [address, run]);
 
   // const { longPosition, shortPosition, run } = useFetchPositions({ futurePrice: 0 });
 
@@ -53,6 +60,8 @@ function WalletModal() {
         <span>Connected to {address}</span>
         <br />
         <span>ChainId {chain?.id}</span>
+        <br />
+        <span>LOADING {balances['loading'] ? 'true' : 'false'}</span>
       </Wrapper>
     );
   }
