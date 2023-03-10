@@ -1,12 +1,14 @@
 import { useState } from 'react';
 
-const useInputChange = (props: { defaultValue?: any; callback?: any }) => {
+// 如果外部传入callback则所有动作通过callback控制
+const useInputChange = (props: { defaultValue?: any; callback?: (...props: any) => void }) => {
   const { defaultValue, callback } = props;
-  const [value, setAmount] = useState(defaultValue);
+  const [value, setValue] = useState(defaultValue);
   const handleChange = (e: any) => {
-    setAmount(e);
     if (callback) {
-      callback(e);
+      callback(e, setValue);
+    } else {
+      setValue(e);
     }
   };
 
