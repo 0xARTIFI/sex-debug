@@ -19,6 +19,29 @@ const useFetchPositions = () => {
   const { futurePrice } = useRecoilValue(recoilExchangeFuturePrice);
   const { address } = useAccount();
 
+  const initPosition = (position: TRADE_DIRECTION_ENUM) => {
+    setPositions((old: PositionsInterface) => {
+      const _old = JSON.parse(JSON.stringify(old));
+      return {
+        ..._old,
+        [position]: {
+          leverage: '0',
+          netValue: '0',
+          earnings: '0',
+          earningRates: '0',
+          collateral: '0',
+          originEntryPrice: '0',
+          entryPrice: '0',
+          size: '0',
+          sizeValue: '0',
+          liqPrice: '0',
+          totalPositionValue: '0',
+          direction: '0',
+        },
+      };
+    });
+  };
+
   // multicall 方法
   const multiCallUserInfo = async () => {
     // const multicall = new Multicall({
@@ -85,6 +108,7 @@ const useFetchPositions = () => {
       !futurePrice ||
       !tokenPrice
     ) {
+      initPosition(TRADE_DIRECTION_ENUM.LONG);
       return undefined;
     }
 
@@ -160,6 +184,7 @@ const useFetchPositions = () => {
       !futurePrice ||
       !tokenPrice
     ) {
+      initPosition(TRADE_DIRECTION_ENUM.SHORT);
       return undefined;
     }
     const originCurrentPrice = BigNumber(futurePrice).multipliedBy(1).toString();
