@@ -96,7 +96,9 @@ const Position = ({ row, futurePrice }: { row: any; futurePrice?: string }) => {
           />
           <div className="row-between">
             <SmartButton onClick={handleClose}>Close</SmartButton>
-            <SmartButton onClick={handleAdjust}>Collateral</SmartButton>
+            <SmartButton disabled onClick={handleAdjust}>
+              Collateral
+            </SmartButton>
           </div>
         </div>
       ) : null}
