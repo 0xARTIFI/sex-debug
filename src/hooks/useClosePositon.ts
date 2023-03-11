@@ -53,11 +53,11 @@ const useClosePositon = () => {
     }
   };
 
-  const { run } = useRequest(closePosition, {
+  const { run, loading } = useRequest(closePosition, {
     manual: true,
   });
 
-  return { run };
+  return { run, loading };
 };
 
 export default useClosePositon;

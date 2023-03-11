@@ -30,7 +30,7 @@ const Container = styled.div`
 //   "direction": "SHORT"
 // }
 const Position = ({ row, futurePrice }: { row: any; futurePrice?: string }) => {
-  const { run } = useClosePositon();
+  const { run, loading } = useClosePositon();
 
   const [closeValue, handleCloseValueChange] = useInputChange({});
 
@@ -95,7 +95,9 @@ const Position = ({ row, futurePrice }: { row: any; futurePrice?: string }) => {
             suffix={row?.direction === TRADE_DIRECTION_ENUM.SHORT ? 'U' : 'U'}
           />
           <div className="row-between">
-            <SmartButton onClick={handleClose}>Close</SmartButton>
+            <SmartButton loading={loading} onClick={handleClose}>
+              Close
+            </SmartButton>
             <SmartButton disabled onClick={handleAdjust}>
               Collateral
             </SmartButton>
