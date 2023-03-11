@@ -29,9 +29,9 @@ export const LeverageShortContract = { address: LeverageShort, abi: leverageShor
 
 export const exchangeContract = { address: SubstanceExchange, abi: exchangeAbi };
 
-export const liquidityPoolContract = { address: SubstanceExchange, abi: lpPoolAbi };
+export const liquidityPoolContract = { address: LiquidityPool, abi: lpPoolAbi };
 
-export const optionContract = { address: SubstanceExchange, abi: optionAbi };
+export const optionContract = { address: Option, abi: optionAbi };
 
 export enum BalancesEnum {
   ETH_IN_WALLET = 'ETH_IN_WALLET',

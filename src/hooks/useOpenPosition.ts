@@ -7,7 +7,7 @@ import useFetchPositions from './useFetchPositions';
 
 const useOpenPosition = () => {
   const { run: balancesRun } = useBalances();
-  const { run: positionRun } = useFetchPositions({ futurePrice: 1560 });
+  const { run: positionRun } = useFetchPositions();
 
   const openPosition = async (
     direction: TRADE_DIRECTION_ENUM.LONG | TRADE_DIRECTION_ENUM.SHORT,
@@ -18,6 +18,8 @@ const useOpenPosition = () => {
     const decimal = direction === TRADE_DIRECTION_ENUM.SHORT ? 6 : 9;
 
     const marginAmount = ethers.utils.parseUnits(input, decimal).toString();
+
+    console.log('marginAmount, leverage', marginAmount, leverage, currentFunction);
 
     try {
       const config = await prepareWriteContract({

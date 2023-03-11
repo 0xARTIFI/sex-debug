@@ -40,3 +40,18 @@ export interface Error {
 
 export type USDCAmount = string;
 export type WETHAmount = string;
+
+export interface Position {
+  leverage: string;
+  netValue: string;
+  earnings: string;
+  earningRates: string;
+  collateral: string;
+  originEntryPrice: string;
+  entryPrice: string;
+  size: string;
+  sizeValue: string;
+  liqPrice: string;
+  totalPositionValue: string;
+  direction: string;
+}

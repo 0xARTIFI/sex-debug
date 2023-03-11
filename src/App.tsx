@@ -10,7 +10,16 @@ import TraderAssets from './pages/TraderAssets';
 const Wrapper = styled.div`
   width: 1000px;
   margin: auto;
-  padding: 10px;
+  height: 100vh;
+
+  .inner {
+    padding: 10px 0 50px;
+
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+    gap: 20px;
+  }
 `;
 
 function App() {
@@ -18,13 +27,15 @@ function App() {
     <RecoilRoot>
       <WagmiConfig client={client}>
         <GlobalStyle />
-        <Wrapper className="col-center" style={{ gap: '20px' }}>
-          <WalletModal />
-          <div className="row-between full-width" style={{ gap: '20px' }}>
-            <TraderAssets />
-            <Stake />
+        <Wrapper className="">
+          <div className="inner col-start">
+            <WalletModal />
+            <div className="row-between full-width" style={{ gap: '20px' }}>
+              <TraderAssets />
+              <Stake />
+            </div>
+            <Perpetual />
           </div>
-          <Perpetual />
         </Wrapper>
       </WagmiConfig>
     </RecoilRoot>

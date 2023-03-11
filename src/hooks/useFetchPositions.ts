@@ -1,20 +1,22 @@
 import { LeverageLongContaact, LeverageShortContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
-import { recoilPositions } from '@/models/_global';
+import { recoilExchangeFuturePrice, recoilExchangeTokenPrice, recoilPositions } from '@/models/_global';
 import { PositionsInterface } from '@/typings/_global';
 import { multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { useEffect, useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
 
 // 强平保证金率
 const liqRate = 0.02;
 let hasRuned = false;
 
-const useFetchPositions = ({ futurePrice = 0 }: any) => {
+const useFetchPositions = () => {
+  const { tokenPrice } = useRecoilValue(recoilExchangeTokenPrice);
   const setPositions = useSetRecoilState(recoilPositions);
+  const { futurePrice } = useRecoilValue(recoilExchangeFuturePrice);
   const { address } = useAccount();
 
   // multicall 方法
@@ -41,6 +43,8 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
 
     if (!positionMultiCallResult?.length) return null;
 
+    console.log('positionMultiCallResult', positionMultiCallResult);
+
     // 多单仓位
     const longFutureContractRes: any[] = positionMultiCallResult[0];
     // 空单仓位
@@ -50,7 +54,7 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
     if (!longFutureContractRes.length || !longFutureContractRes[1] || !longFutureContractRes[2]) return;
     const entryPriceLong = ethers.BigNumber.from(longFutureContractRes[0])?.toString();
     const tokenAmountLong = ethers.utils.formatUnits(longFutureContractRes[1], 0)?.toString();
-    const marginAmountLong = ethers.utils.formatUnits(longFutureContractRes[2], 9)?.toString();
+    const marginAmountLong = ethers.utils.formatUnits(longFutureContractRes[2], 6)?.toString();
     const traderLongPosition = [entryPriceLong, tokenAmountLong, marginAmountLong, TRADE_DIRECTION_ENUM.LONG];
 
     if (!shortFutureContractRes.length || !shortFutureContractRes[1] || !shortFutureContractRes[2]) return;
@@ -78,43 +82,44 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
       !longPosition?.length ||
       BigNumber(longPosition[1]).isNaN() ||
       BigNumber(longPosition[1]).lte(0) ||
-      !futurePrice
+      !futurePrice ||
+      !tokenPrice
     ) {
       return undefined;
     }
 
-    console.table(longPosition);
-    const originCurrentPrice = BigNumber(futurePrice).multipliedBy(100).toString();
+    const originCurrentPrice = BigNumber(futurePrice).multipliedBy(1).toString();
     const originEntryPrice = longPosition[0]; // U
     const originTokenAmount = longPosition[1]; // 张
-    const originCollateral = longPosition[2]; // Collateral ETH
-    const currenPrice = BigNumber(originCurrentPrice).div(100).toString();
-    const entryPrice = BigNumber(originEntryPrice).div(100).toString();
+    const originCollateral = longPosition[2]; // Collateral U
+    const currenPrice = BigNumber(originCurrentPrice).div(100).toString(); // 1423.12
+    const entryPrice = BigNumber(originEntryPrice).div(100).toString(); // 1234.123
     // const marginAmount = ethers.utils.formatUnits(longPosition[2], 9);
 
     // 张数*面值
-    const sizePrice = BigNumber(originTokenAmount).multipliedBy(0.01);
+    const sizePrice = BigNumber(originTokenAmount).multipliedBy(10e-5);
 
-    // 收益（ ETH个数）= 张数*面值 *（1/S1 -1/S2)
-    const earnings = BigNumber(sizePrice).multipliedBy(
-      BigNumber(1).div(entryPrice).minus(BigNumber(1).div(currenPrice)),
-    );
+    // 收益（ U个数）= 张数*面值 *（S2 - S1）
+    const earnings = BigNumber(sizePrice).multipliedBy(BigNumber(currenPrice).minus(entryPrice));
+
+    // 收益（ ETH个数）= 张数*面值 *（S2 -S1）/S2
+    const earningsE = BigNumber(sizePrice).multipliedBy(BigNumber(currenPrice).minus(entryPrice)).div(currenPrice);
 
     // 收益率 = 收益 / 保证金
     const earningRates = BigNumber(earnings).div(originCollateral).multipliedBy(100);
 
-    // 总仓位价值（ETH个数） = 张数*面值 / S2;
-    const totalPositionValue = BigNumber(sizePrice).div(currenPrice);
+    // 总仓位价值（U个数） = 张数*面值 * S2;
+    const totalPositionValue = BigNumber(sizePrice).multipliedBy(currenPrice);
 
-    // 用户权益（ETH个数）= 保证金 + 收益
+    // 用户权益（U个数）= 保证金 + 收益
     const userProfit = BigNumber(originCollateral).plus(earnings);
 
     // 当前杠杆 = 总仓位价值 / 用户权益
     const leverage = BigNumber(totalPositionValue).div(userProfit);
 
-    // 强平价U =（1+0.02/（1/S1 + originCollateral /（张数*面值））
-    const liqPrice = BigNumber(1 + liqRate).div(
-      BigNumber(1).div(entryPrice).plus(BigNumber(originCollateral).div(sizePrice)),
+    // 强平价U =（S1-Collateral/（张数*面值））/（1 -强平保证金率）
+    const liqPrice = BigNumber(BigNumber(entryPrice).minus(BigNumber(originCollateral).div(sizePrice))).div(
+      BigNumber(1).minus(liqRate),
     );
 
     const params = {
@@ -144,7 +149,7 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
     });
 
     return params;
-  }, [futurePrice, longPosition]);
+  }, [futurePrice, tokenPrice, longPosition]);
 
   const shortPositionParams = useMemo(() => {
     if (
@@ -152,12 +157,12 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
       !shortPosition?.length ||
       BigNumber(shortPosition[1]).isNaN() ||
       BigNumber(shortPosition[1]).lte(0) ||
-      !futurePrice
+      !futurePrice ||
+      !tokenPrice
     ) {
       return undefined;
     }
-    console.table(shortPosition);
-    const originCurrentPrice = BigNumber(futurePrice).multipliedBy(100).toString();
+    const originCurrentPrice = BigNumber(futurePrice).multipliedBy(1).toString();
     const originEntryPrice = shortPosition[0]; // U
     const originTokenAmount = shortPosition[1]; // 张
     const originCollateral = shortPosition[2]; // Collateral ETH
@@ -206,8 +211,6 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
       direction: TRADE_DIRECTION_ENUM.SHORT,
     };
 
-    console.table(params);
-
     setPositions((old: PositionsInterface) => {
       const _old = JSON.parse(JSON.stringify(old));
       return {
@@ -216,8 +219,10 @@ const useFetchPositions = ({ futurePrice = 0 }: any) => {
       };
     });
 
+    console.table(params);
+
     return params;
-  }, [futurePrice, shortPosition]);
+  }, [futurePrice, tokenPrice, shortPosition]);
 
   useEffect(() => {
     if (address && !hasRuned) {
