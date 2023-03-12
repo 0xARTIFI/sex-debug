@@ -1,6 +1,8 @@
 import { optionContract } from '@/configs/common';
 import {
   recoilAllOptionPositions,
+  recoilOptionCurEpochIdExerciseTime,
+  recoilOptionEpochIds,
   recoilSettledOptionPositions,
   recoilUnsettledOptionPositions,
 } from '@/models/_global';
@@ -8,13 +10,16 @@ import { OptionPositionItem } from '@/typings/_global';
 import { readContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import useAuth from '../useAuth';
 
+// todo 欠缺redeem时间
 const useFetchOptionPositions = () => {
+  const { endEpochId } = useRecoilValue(recoilOptionEpochIds);
   const setOptionPosition = useSetRecoilState(recoilAllOptionPositions);
   const setSettledOptionPositions = useSetRecoilState(recoilSettledOptionPositions);
   const setUnsettledOptionPositions = useSetRecoilState(recoilUnsettledOptionPositions);
+  const { exerciseTime } = useRecoilValue(recoilOptionCurEpochIdExerciseTime);
 
   const { address } = useAuth(true);
   const fetchPosition = async ({ from, to }: { from?: number | string; to: number | string }) => {
@@ -46,11 +51,17 @@ const useFetchOptionPositions = () => {
           totalCostOrigin: res[3][i]?.totalCost,
           totalSize: res[3][i]?.totalSize?.toString(),
         };
+
+        const canRedeem = endEpochId ? BigNumber(endEpochId).gt(epochId) : false;
+        const redeemTime = canRedeem ? 0 : exerciseTime || 9999999999;
+
         position.push({
           epochId,
           productId,
           ...res2,
           ...res3,
+          canRedeem,
+          redeemTime,
         });
       }
 

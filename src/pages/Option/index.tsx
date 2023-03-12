@@ -13,6 +13,7 @@ import useInputChange from '@/hooks/useInputChange';
 import { recoilOptionEpochIds, recoilUnsettledOptionPositions } from '@/models/_global';
 import { useMount } from 'ahooks';
 import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
 import { useEffect, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { styled } from 'styled-components';
@@ -192,7 +193,16 @@ const Option = () => {
                     <div>{i?.strikePrice}</div>
                   </div>
 
-                  <Button loading={redeemLoading} onClick={() => handleRedeem(i?.epochId, i?.productId)}>
+                  <div className="row-between full-width">
+                    <div>Exercise Date</div>
+                    <div>{i?.canRedeem ? 'Valid' : dayjs(i?.redeemTime).format('MM-DD HH:mm')}</div>
+                  </div>
+
+                  <Button
+                    disabled={!i?.canRedeem}
+                    loading={redeemLoading}
+                    onClick={() => handleRedeem(i?.epochId, i?.productId)}
+                  >
                     redeem
                   </Button>
                   <div className="divider" />

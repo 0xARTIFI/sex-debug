@@ -15,6 +15,15 @@ export const recoilOptionEpochIds = atom<{
   },
 });
 
+export const recoilOptionCurEpochIdExerciseTime = atom<{
+  exerciseTime: number | undefined;
+}>({
+  key: 'optionCurEpochIdExerciseTime',
+  default: {
+    exerciseTime: undefined,
+  },
+});
+
 export const recoilBalances = atom<BalancesInterface & { loading: boolean }>({
   key: 'balances',
   default: {

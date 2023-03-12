@@ -42,6 +42,8 @@ export interface OptionPositionItem {
   totalCost: string;
   totalCostOrigin: BigNumber;
   totalSize: string;
+  redeemTime: string | number;
+  canRedeem: boolean;
 }
 
 export interface Error {
