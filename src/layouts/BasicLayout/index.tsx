@@ -10,7 +10,7 @@ const BasicLayout: React.FC<LayoutProps> = (props: LayoutProps) => {
 
   return (
     <div>
-      <nav style={{ height: 100, position: 'fixed', top: 0, zIndex: 100, background: 'red' }}>
+      <nav style={{ position: 'fixed', top: 0, zIndex: 100, background: 'red' }}>
         <ul>
           <li>
             <Link to="/">Home</Link>
