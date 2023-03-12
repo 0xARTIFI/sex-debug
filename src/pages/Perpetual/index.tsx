@@ -2,12 +2,12 @@ import Input from '@/components/Input';
 import Tabs from '@/components/Tabs';
 import { SmartButton } from '@/components/_global';
 import { TRADE_DIRECTION_ENUM } from '@/configs/common';
+import useExchangeFuturePrice from '@/hooks/perpetual/useExchangeFuturePrice';
+import useFetchPerpetualPositions from '@/hooks/perpetual/useFetchPerpetualPositions';
+import useOpenPosition from '@/hooks/perpetual/useOpenPosition';
 import useAuth from '@/hooks/useAuth';
-import useExchangeFuturePrice from '@/hooks/useExchangeFuturePrice';
-import useFetchPositions from '@/hooks/useFetchPositions';
 import useInputChange from '@/hooks/useInputChange';
-import useOpenPosition from '@/hooks/useOpenPosition';
-import { recoilExchangeFuturePrice, recoilPositions } from '@/models/_global';
+import { recoilExchangeFuturePrice, recoilPerpetualPositions } from '@/models/_global';
 import { useInterval } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
@@ -54,7 +54,7 @@ const Perpetual = () => {
   const [interval, setInterval] = useState<undefined | number>(undefined);
 
   const { run: fetchFuturePrice } = useExchangeFuturePrice();
-  const { run: fetchPositon } = useFetchPositions();
+  const { run: fetchPositon } = useFetchPerpetualPositions();
 
   useInterval(() => {
     console.count();
@@ -76,7 +76,7 @@ const Perpetual = () => {
     }
   }, [isConnected]);
 
-  const { LONG, SHORT } = useRecoilValue(recoilPositions);
+  const { LONG, SHORT } = useRecoilValue(recoilPerpetualPositions);
 
   return (
     <Container className="full-width row-between gap">
@@ -86,7 +86,11 @@ const Perpetual = () => {
         <div className="col-center">
           <div className="row-between">
             <span>Pay</span>
-            <Input value={payAmount} onChange={handleAmountChange} />
+            <Input
+              suffix={curDirection === TRADE_DIRECTION_ENUM.SHORT ? 'U' : 'E'}
+              value={payAmount}
+              onChange={handleAmountChange}
+            />
           </div>
 
           <div className="row-between">

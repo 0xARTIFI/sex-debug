@@ -51,6 +51,8 @@ export enum TRADE_DIRECTION_ENUM {
   SHORT = 'SHORT',
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
+  CALL = 'CALL',
+  PUT = 'PUT',
 }
 
 export enum TRADE_TOKEN {

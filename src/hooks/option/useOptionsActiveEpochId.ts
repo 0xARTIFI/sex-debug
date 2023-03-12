@@ -1,10 +1,11 @@
 import { optionContract } from '@/configs/common';
 import { recoilOptionEpochIds } from '@/models/_global';
 import { multicall } from '@wagmi/core';
+import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { useSetRecoilState } from 'recoil';
 
-const useOptions = () => {
+const useOptionsActiveEpochId = () => {
   const setIds = useSetRecoilState(recoilOptionEpochIds);
 
   const getActiveEpochId = async () => {
@@ -19,22 +20,24 @@ const useOptions = () => {
     });
 
     const currentEpochId = multicallRes[0]?.toString();
-    console.log('currentEpochId', currentEpochId);
     const prevEpochId = BigNumber.max(0, BigNumber(currentEpochId as string).minus(100)).toString();
     const len = BigNumber(currentEpochId as string)
       .minus(prevEpochId)
-      .toString();
-    const historicalEpochId = new Array(len).map((i, index) => BigNumber(prevEpochId).plus(index).toString());
+      .toNumber();
+    const historicalEpochId = new Array(len).fill('0').map((i, index) => BigNumber(prevEpochId).plus(index).toString());
+
+    historicalEpochId.push(currentEpochId);
 
     setIds({
       startEpochId: prevEpochId,
       endEpochId: currentEpochId,
       historicalEpochIds: historicalEpochId,
     });
-    console.log('historicalEpochId', historicalEpochId);
   };
 
-  return null;
+  const props = useRequest(getActiveEpochId, { manual: true });
+
+  return props;
 };
 
-export default useOptions;
+export default useOptionsActiveEpochId;

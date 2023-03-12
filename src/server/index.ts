@@ -1,3 +1,5 @@
+import { Address } from 'wagmi';
+
 // todo 处理成3分钟缓存  避免多次发接口
 export const getSignatureAndPrice = async () => {
   const res = await fetch('https://option.btcta.io/api/trading/get_substance_option_prices_sign', {
@@ -26,6 +28,15 @@ export const getOptionByPrice = async (epoch_id: any, product_id: any) => {
       method: 'GET',
     },
   );
+  const text = await res.json();
+  return text;
+};
+
+// https://option.btcta.io/api/trading/send_substance_token?address
+export const getFaucet = async (address: Address) => {
+  const res = await fetch(`https://option.btcta.io/api/trading/send_substance_token?address=${address}`, {
+    method: 'GET',
+  });
   const text = await res.json();
   return text;
 };

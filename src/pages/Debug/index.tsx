@@ -1,5 +1,6 @@
 import { TraderAssets, WalletModal } from '@/components/_global';
 import { styled } from 'styled-components';
+import Option from '../Option';
 import Perpetual from '../Perpetual';
 import Stake from '../Stake';
 
@@ -28,6 +29,7 @@ const Debug = () => {
           <Stake />
         </div>
         <Perpetual />
+        <Option />
       </div>
     </Wrapper>
   );

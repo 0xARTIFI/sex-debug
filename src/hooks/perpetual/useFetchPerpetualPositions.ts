@@ -1,5 +1,5 @@
 import { LeverageLongContaact, LeverageShortContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
-import { recoilExchangeFuturePrice, recoilExchangeTokenPrice, recoilPositions } from '@/models/_global';
+import { recoilExchangeFuturePrice, recoilExchangeTokenPrice, recoilPerpetualPositions } from '@/models/_global';
 import { PositionsInterface } from '@/typings/_global';
 import { multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
@@ -13,9 +13,9 @@ import { useAccount } from 'wagmi';
 const liqRate = 0.02;
 let hasRuned = false;
 
-const useFetchPositions = () => {
+const useFetchPerpetualPositions = () => {
   const { tokenPrice } = useRecoilValue(recoilExchangeTokenPrice);
-  const setPositions = useSetRecoilState(recoilPositions);
+  const setPositions = useSetRecoilState(recoilPerpetualPositions);
   const { futurePrice } = useRecoilValue(recoilExchangeFuturePrice);
   const { address } = useAccount();
 
@@ -267,4 +267,4 @@ const useFetchPositions = () => {
   };
 };
 
-export default useFetchPositions;
+export default useFetchPerpetualPositions;

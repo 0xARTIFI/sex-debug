@@ -66,8 +66,42 @@ export const recoilExchangeFuturePrice = atom<{
   },
 });
 
-export const recoilPositions = atom<PositionsInterface>({
-  key: 'positions',
+export const recoilPerpetualPositions = atom<PositionsInterface>({
+  key: 'perpetualPositions',
+  default: {
+    [TRADE_DIRECTION_ENUM.LONG]: {
+      leverage: '0',
+      netValue: '0',
+      earnings: '0',
+      earningRates: '0',
+      collateral: '0',
+      originEntryPrice: '0',
+      entryPrice: '0',
+      size: '0',
+      sizeValue: '0',
+      liqPrice: '0',
+      totalPositionValue: '0',
+      direction: '0',
+    },
+    [TRADE_DIRECTION_ENUM.SHORT]: {
+      leverage: '0',
+      netValue: '0',
+      earnings: '0',
+      earningRates: '0',
+      collateral: '0',
+      originEntryPrice: '0',
+      entryPrice: '0',
+      size: '0',
+      sizeValue: '0',
+      liqPrice: '0',
+      totalPositionValue: '0',
+      direction: '0',
+    },
+  },
+});
+
+export const recoilOptionPositions = atom<PositionsInterface>({
+  key: 'optionPositions',
   default: {
     [TRADE_DIRECTION_ENUM.LONG]: {
       leverage: '0',

@@ -1,7 +1,7 @@
 import Input from '@/components/Input';
 import { SmartButton } from '@/components/_global';
 import { TRADE_DIRECTION_ENUM } from '@/configs/common';
-import useClosePositon from '@/hooks/useClosePositon';
+import useClosePositon from '@/hooks/perpetual/useClosePositon';
 import useInputChange from '@/hooks/useInputChange';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';

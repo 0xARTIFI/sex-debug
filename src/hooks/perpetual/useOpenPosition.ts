@@ -2,12 +2,12 @@ import { exchangeContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
-import useBalances from './useBalances';
-import useFetchPositions from './useFetchPositions';
+import useBalances from '../useBalances';
+import useFetchPerpetualPositions from './useFetchPerpetualPositions';
 
 const useOpenPosition = () => {
   const { run: balancesRun } = useBalances();
-  const { run: positionRun } = useFetchPositions();
+  const { run: positionRun } = useFetchPerpetualPositions();
 
   const openPosition = async (
     direction: TRADE_DIRECTION_ENUM.LONG | TRADE_DIRECTION_ENUM.SHORT,

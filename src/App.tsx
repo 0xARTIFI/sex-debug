@@ -2,7 +2,7 @@ import { GlobalStyle } from '@/assets/styles/global';
 import { client, WagmiConfig } from '@/configs/wallet';
 import { RecoilRoot } from 'recoil';
 import { styled } from 'styled-components';
-import Home from './pages/Home';
+import Debug from './pages/Debug';
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -15,8 +15,8 @@ function App() {
       <WagmiConfig client={client}>
         <GlobalStyle />
         <Wrapper>
-          {/* <Debug /> */}
-          <Home />
+          <Debug />
+          {/* <Home /> */}
         </Wrapper>
       </WagmiConfig>
     </RecoilRoot>

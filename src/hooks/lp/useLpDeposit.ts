@@ -4,7 +4,7 @@ import { USDCAmount, WETHAmount } from '@/typings/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
-import useApprove from './useApprove';
+import useApprove from '../useApprove';
 import useLpTokenBalance from './useLpTokenBalance';
 
 const useLpDeposit = () => {

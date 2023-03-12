@@ -39,7 +39,7 @@ function WalletModal() {
     }
   }, [address, run]);
 
-  // const { longPosition, shortPosition, run } = useFetchPositions({ futurePrice: 0 });
+  // const { longPosition, shortPosition, run } = useFetchPerpetualPositions({ futurePrice: 0 });
 
   // console.log('longPositionParams', longPosition, shortPosition);
 

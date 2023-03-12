@@ -3,13 +3,13 @@ import { exchangeContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
-import useFetchPositions from './useFetchPositions';
+import useFetchPerpetualPositions from './useFetchPerpetualPositions';
 
 // traderCloseLongOrder
 // traderCloseShortOrder
 
 const useClosePositon = () => {
-  const { run: fetchPositions } = useFetchPositions();
+  const { run: fetchPositions } = useFetchPerpetualPositions();
 
   const closePosition = async (direction: TRADE_DIRECTION_ENUM, tokenAmount: number, entreyPrice: number) => {
     if (!tokenAmount) throw new Error('Invalid Amount');
