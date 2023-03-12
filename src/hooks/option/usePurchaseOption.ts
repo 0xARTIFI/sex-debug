@@ -29,7 +29,6 @@ const usePurchaseOption = () => {
         functionName: 'traderBuyOption',
         args: [...params],
       });
-      console.log('pucharseOption!!');
       console.table(params);
       const tx = await writeContract(config);
       const res = await tx.wait();
