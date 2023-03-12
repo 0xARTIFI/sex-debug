@@ -1,5 +1,5 @@
 import { BalancesEnum, TRADE_DIRECTION_ENUM } from '@/configs/common';
-import type { BalancesInterface, PositionsInterface } from '@/typings/_global';
+import type { BalancesInterface, OptionPositionItem, PositionsInterface } from '@/typings/_global';
 import { atom } from 'recoil';
 
 export const recoilOptionEpochIds = atom<{
@@ -100,36 +100,17 @@ export const recoilPerpetualPositions = atom<PositionsInterface>({
   },
 });
 
-export const recoilOptionPositions = atom<PositionsInterface>({
-  key: 'optionPositions',
-  default: {
-    [TRADE_DIRECTION_ENUM.LONG]: {
-      leverage: '0',
-      netValue: '0',
-      earnings: '0',
-      earningRates: '0',
-      collateral: '0',
-      originEntryPrice: '0',
-      entryPrice: '0',
-      size: '0',
-      sizeValue: '0',
-      liqPrice: '0',
-      totalPositionValue: '0',
-      direction: '0',
-    },
-    [TRADE_DIRECTION_ENUM.SHORT]: {
-      leverage: '0',
-      netValue: '0',
-      earnings: '0',
-      earningRates: '0',
-      collateral: '0',
-      originEntryPrice: '0',
-      entryPrice: '0',
-      size: '0',
-      sizeValue: '0',
-      liqPrice: '0',
-      totalPositionValue: '0',
-      direction: '0',
-    },
-  },
+export const recoilAllOptionPositions = atom<OptionPositionItem[]>({
+  key: 'allOptionPositions',
+  default: [],
+});
+
+export const recoilUnsettledOptionPositions = atom<OptionPositionItem[]>({
+  key: 'unsettledOptionPositions',
+  default: [],
+});
+
+export const recoilSettledOptionPositions = atom<OptionPositionItem[]>({
+  key: 'settledOptionPositions',
+  default: [],
 });

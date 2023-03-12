@@ -1,3 +1,4 @@
+import { Button } from '@/components';
 import Input from '@/components/Input';
 import Tabs from '@/components/Tabs';
 import { SmartButton } from '@/components/_global';
@@ -5,10 +6,11 @@ import { TRADE_DIRECTION_ENUM } from '@/configs/common';
 import useFetchOptionPositions from '@/hooks/option/useFetchOptionPositions';
 import useOptionExerciseDate from '@/hooks/option/useOptionExerciseDate';
 import useOptionPriceMap from '@/hooks/option/useOptionPriceMap';
+import useOptionReedem from '@/hooks/option/useOptionReedem';
 import useOptionsActiveEpochId from '@/hooks/option/useOptionsActiveEpochId';
 import usePurchaseOption from '@/hooks/option/usePurchaseOption';
 import useInputChange from '@/hooks/useInputChange';
-import { recoilOptionEpochIds } from '@/models/_global';
+import { recoilOptionEpochIds, recoilUnsettledOptionPositions } from '@/models/_global';
 import { useMount } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo } from 'react';
@@ -27,6 +29,13 @@ const Container = styled.div`
   .gap {
     gap: 12px;
   }
+
+  .divider {
+    height: 1px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    margin: 20px 0;
+  }
 `;
 
 const tabs = [
@@ -42,6 +51,8 @@ const Option = () => {
   const { startEpochId, endEpochId } = useRecoilValue(recoilOptionEpochIds);
   const { curExerciseTime, exerciseDateList } = useOptionExerciseDate();
 
+  const { run: redeem, loading: redeemLoading } = useOptionReedem();
+
   useMount(() => {
     optionPriceMapRun();
     run();
@@ -49,7 +60,7 @@ const Option = () => {
 
   useEffect(() => {
     if (startEpochId && endEpochId) {
-      fetchOptionPositionsRun(startEpochId, endEpochId);
+      fetchOptionPositionsRun({ from: startEpochId, to: endEpochId });
     }
   }, [endEpochId, fetchOptionPositionsRun, startEpochId]);
 
@@ -97,7 +108,13 @@ const Option = () => {
     purchaseOptionRun(endEpochId, curOptionProduct?.index, inputAmount);
   };
 
-  console.table(data?.priceMap?.call);
+  const optionPosition = useRecoilValue(recoilUnsettledOptionPositions);
+
+  const handleRedeem = (epochIds: string | string[], productIds: string | string[]) => {
+    redeem(epochIds, productIds);
+  };
+
+  // console.table(data?.priceMap?.call);
   return (
     <Container className="full-width gap col-start ">
       <div className="row-between gap full-width">
@@ -156,7 +173,33 @@ const Option = () => {
             </SmartButton>
           </div>
         </div>
-        <div className="b full-width">Positon</div>
+        <div className="b full-width">
+          {optionPosition?.length
+            ? optionPosition?.map((i, index) => (
+                <div key={index} className="col-start gap full-width">
+                  <div className="row-between full-width">
+                    <div>Product</div>
+                    <div>{!i?.isCall ? TRADE_DIRECTION_ENUM.PUT : TRADE_DIRECTION_ENUM.CALL}</div>
+                  </div>
+
+                  <div className="row-between full-width">
+                    <div>Shares</div>
+                    <div>{i?.totalSize}</div>
+                  </div>
+
+                  <div className="row-between full-width">
+                    <div>Strike Price</div>
+                    <div>{i?.strikePrice}</div>
+                  </div>
+
+                  <Button loading={redeemLoading} onClick={() => handleRedeem(i?.epochId, i?.productId)}>
+                    redeem
+                  </Button>
+                  <div className="divider" />
+                </div>
+              ))
+            : null}
+        </div>
       </div>
     </Container>
   );

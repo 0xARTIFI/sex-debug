@@ -34,7 +34,7 @@ const usePurchaseOption = () => {
       const tx = await writeContract(config);
       const res = await tx.wait();
       if (startEpochId && endEpochId) {
-        fetchOptionPositionsRun(startEpochId, endEpochId);
+        fetchOptionPositionsRun({ from: startEpochId, to: endEpochId });
       }
       return res;
     } catch (e: any) {

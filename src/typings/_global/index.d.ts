@@ -1,4 +1,5 @@
 import { AllowancesEnum, BalancesEnum, TRADE_DIRECTION_ENUM } from '@/configs/common';
+import { BigNumber } from 'ethers';
 
 export interface BalancesInterface {
   [BalancesEnum.ETH_IN_WALLET]: string;
@@ -30,6 +31,17 @@ export interface SinglePositionInterface {
 export interface PositionsInterface {
   [TRADE_DIRECTION_ENUM.LONG]: SinglePositionInterface;
   [TRADE_DIRECTION_ENUM.SHORT]: SinglePositionInterface;
+}
+
+export interface OptionPositionItem {
+  epochId: string;
+  productId: string;
+  isCall: boolean;
+  strikePrice: string;
+  isSettle: boolean;
+  totalCost: string;
+  totalCostOrigin: BigNumber;
+  totalSize: string;
 }
 
 export interface Error {
