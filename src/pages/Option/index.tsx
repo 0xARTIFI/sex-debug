@@ -115,7 +115,6 @@ const Option = () => {
     redeem(epochIds, productIds);
   };
 
-  // console.table(data?.priceMap?.call);
   return (
     <Container className="full-width gap col-start ">
       <div className="row-between gap full-width">

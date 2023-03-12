@@ -37,7 +37,7 @@ const useOptionPriceMap = () => {
         }
         newCallMap[i] = {
           value: callMap[i],
-          index,
+          index: !index ? index : index * 2,
         };
       });
       Object.keys(putMap).forEach((i: any, index: any) => {
@@ -49,7 +49,7 @@ const useOptionPriceMap = () => {
         }
         newPutMap[i] = {
           value: putMap[i],
-          index,
+          index: index * 2 + 1,
         };
       });
 
