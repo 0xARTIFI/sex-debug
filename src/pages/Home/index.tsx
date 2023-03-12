@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import LineWaveBackground from './components/lineWaveBackground';
+import LineWaveBackground from './components/LineWaveBackground';
 
 const Wrapper = styled.div`
   position: relative;
@@ -142,7 +142,7 @@ const Wrapper = styled.div`
   }
 `;
 
-function Home() {
+export function Component() {
   return (
     <>
       <LineWaveBackground />
@@ -227,4 +227,6 @@ function Home() {
   );
 }
 
-export default Home;
+Component.displayName = 'Home';
+
+// export default Component;

@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Debug = () => {
+export function Component() {
   return (
     <Wrapper className="">
       <div className="inner col-start">
@@ -33,6 +33,8 @@ const Debug = () => {
       </div>
     </Wrapper>
   );
-};
+}
 
-export default Debug;
+Component.displayName = 'Debug';
+
+// export default Debug;
