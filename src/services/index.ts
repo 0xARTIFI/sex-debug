@@ -1,3 +1,4 @@
+/* eslint-disable @iceworks/best-practices/recommend-polyfill */
 import { Address } from 'wagmi';
 
 // todo 处理成3分钟缓存  避免多次发接口
