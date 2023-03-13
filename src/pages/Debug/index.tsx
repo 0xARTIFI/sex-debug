@@ -1,6 +1,6 @@
 import { TraderAssets, WalletModal } from '@/components/_global';
 import { styled } from 'styled-components';
-import Option from '../Option';
+import Option from '../Option_Old';
 import Perpetual from '../Perpetual';
 import Stake from '../Stake';
 

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        lazy: () => import('@/pages/Home'),
+        lazy: () => import('@/pages/home_Old'),
       },
       {
         path: 'about',
