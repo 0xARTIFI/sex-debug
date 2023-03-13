@@ -176,6 +176,7 @@ type SizeType = 'sm' | 'md' | 'lg';
 export interface SelectProps {
   className?: string;
   placement?: DropdownPlacement;
+  children?: React.ReactNode;
   follow?: boolean;
   size?: SizeType;
   danger?: boolean;
@@ -188,7 +189,7 @@ export interface SelectProps {
 
 interface TriggerProps extends SelectProps {
   followRef: React.RefObject<HTMLDivElement>;
-  children?: React.ReactNode;
+  // children?: React.ReactNode;
   onClose: (...args: any[]) => any;
 }
 
