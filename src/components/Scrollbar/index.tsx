@@ -16,7 +16,7 @@ const Scrollbar: React.FC<ScrollbarProps> = (props: ScrollbarProps) => {
 
   return (
     <Wrapper
-      skin="light"
+      skin="dark"
       trackStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 0, right: 0, border: 0 })}
       thumbStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 3 })}
       trackGap={[4, 4, 4, 4]}

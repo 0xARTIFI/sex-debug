@@ -4,9 +4,8 @@ import classNames from 'classnames';
 import { fadeConfig } from '@/configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cloneElement } from '../_util/reactNode';
-import { Scrollbar, Input } from '@/components';
-import { useDebounceEffect, useClickAway } from 'ahooks';
-import { t } from '@lingui/macro';
+import { Scrollbar } from '@/components';
+import { useClickAway } from 'ahooks';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -185,7 +184,6 @@ export interface SelectProps {
   triggerWidth?: number;
   triggerHeight?: number;
   overlay?: React.ReactNode;
-  onSearch?: (...args: any[]) => any;
 }
 
 interface TriggerProps extends SelectProps {
@@ -214,17 +212,7 @@ const IconArrow: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
 };
 
 const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
-  const {
-    followRef,
-    placement = 'left',
-    size = 'md',
-    follow,
-    triggerWidth,
-    triggerHeight,
-    children,
-    onSearch,
-    onClose,
-  } = props;
+  const { followRef, placement = 'left', size = 'md', follow, triggerWidth, triggerHeight, children, onClose } = props;
 
   const innerRef = React.useRef<HTMLDivElement>(null);
 
@@ -259,36 +247,14 @@ const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
     setDirection(result);
   }, [followRef, innerRef, filterPosition]);
 
-  const [search, setSearch] = React.useState<string>('');
-
-  const selectSearch = React.useMemo(() => {
-    return (
-      <div className="outer">
-        <Input
-          className="search"
-          placeholder={t`search`}
-          prefix={<i className="iconfont icon-search" />}
-          value={search}
-          onChange={(e) => setSearch(e)}
-          clear
-        />
-      </div>
-    );
-  }, [search]);
-
-  useDebounceEffect(() => onSearch?.(search), [search], { wait: 300 });
-
   const selectTrigger = React.useMemo(() => {
     if (!followRef.current) return;
     return (
       <Trigger className={size} ref={innerRef} style={direction} onClick={(e) => e.stopPropagation()} {...fadeConfig}>
-        <Scrollbar>
-          {onSearch && selectSearch}
-          {cloneElement(children, { onClick: onClose })}
-        </Scrollbar>
+        <Scrollbar>{cloneElement(children, { onClick: onClose })}</Scrollbar>
       </Trigger>
     );
-  }, [followRef, size, direction, selectSearch, children, onSearch, onClose]);
+  }, [followRef, size, direction, children, onClose]);
 
   useClickAway(() => onClose?.(), followRef);
 

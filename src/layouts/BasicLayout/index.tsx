@@ -12,6 +12,9 @@ const Wrapper = styled.div`
   > .main {
     height: calc(100vh - 72px);
   }
+  > .footer {
+    height: 50px;
+  }
 `;
 
 function BasicLayout() {

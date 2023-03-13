@@ -16,8 +16,8 @@ export type { ButtonProps } from './Button';
 // export { default as Dynamic } from './Dynamic';
 // export type { DynamicProps } from './Dynamic';
 
-// export { default as Input } from './Input';
-// export type { InputProps } from './Input';
+export { default as Input } from './Input';
+export type { InputProps } from './Input';
 
 // export { default as message } from './Message';
 
@@ -33,11 +33,11 @@ export type { ButtonProps } from './Button';
 export { default as Scrollbar } from './Scrollbar';
 export type { ScrollbarProps } from './Scrollbar';
 
-// export { default as Select } from './Select';
-// export type { SelectProps } from './Select';
+export { default as Select } from './Select';
+export type { SelectProps } from './Select';
 
-// export { default as Slider } from './Slider';
-// export type { SliderProps } from './Slider';
+export { default as Slider } from './Slider';
+export type { SliderProps } from './Slider';
 
 // export { default as Switch } from './Switch';
 // export type { SwitchProps } from './Switch';
