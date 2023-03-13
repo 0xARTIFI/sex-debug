@@ -7,8 +7,8 @@ import BasicLayout from '@/layouts/BasicLayout';
 import { Link, createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 const Wrapper = styled.div`
-  height: 100vh;
-  overflow-y: auto;
+  /* height: 100vh;
+  overflow-y: auto; */
 `;
 
 function NoMatch() {
@@ -38,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: 'debug',
         lazy: () => import('@/pages/Debug'),
+      },
+      {
+        path: 'option',
+        lazy: () => import('@/pages/option'),
       },
       // {
       //   path: 'about1',

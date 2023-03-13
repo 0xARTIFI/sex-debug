@@ -1,6 +1,17 @@
 /* eslint-disable max-len */
 import * as React from 'react';
 
+export const IconSelectArrow: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
+  return (
+    <svg width="14" height="9" viewBox="0 0 14 9" fill="none" {...props}>
+      <path
+        d="M0.533895 0.894913C0.777394 0.64232 1.15843 0.619357 1.42694 0.826024L1.50386 0.894913L6.99967 6.5962L12.4955 0.894913C12.739 0.64232 13.12 0.619357 13.3885 0.826024L13.4655 0.894913C13.709 1.14751 13.7311 1.54277 13.5319 1.82131L13.4655 1.9011L7.48466 8.10525C7.24116 8.35785 6.86012 8.38081 6.59162 8.17414L6.51469 8.10525L0.533895 1.9011C0.266045 1.62325 0.266045 1.17276 0.533895 0.894913Z"
+        fill="#E5E6ED"
+      />
+    </svg>
+  );
+};
+
 export const IconGlobalArrowTop: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
   return (
     <svg width="6" height="4" viewBox="0 0 6 4" fill="none" {...props}>

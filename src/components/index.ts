@@ -30,8 +30,8 @@ export type { ButtonProps } from './Button';
 // export { default as Radio } from './Radio';
 // export type { RadioProps } from './Radio';
 
-// export { default as Scrollbar } from './Scrollbar';
-// export type { ScrollbarProps } from './Scrollbar';
+export { default as Scrollbar } from './Scrollbar';
+export type { ScrollbarProps } from './Scrollbar';
 
 // export { default as Select } from './Select';
 // export type { SelectProps } from './Select';

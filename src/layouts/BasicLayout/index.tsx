@@ -1,31 +1,38 @@
 import * as React from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import { Scrollbar } from '@/components';
+import styled from 'styled-components';
 
-export interface LayoutProps {
-  children?: React.ReactNode;
-}
+const Wrapper = styled.div`
+  background: rgba(20, 21, 24, 1);
+  > .header {
+    height: 72px;
+    background: rgba(243, 134, 134, 0.6);
+  }
+  > .main {
+    height: calc(100vh - 72px);
+  }
+`;
 
-const BasicLayout: React.FC<LayoutProps> = (props: LayoutProps) => {
-  const { children } = props;
-
+function BasicLayout() {
   return (
-    <div>
-      <nav style={{ position: 'fixed', top: 0, zIndex: 100, background: 'red' }}>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
-            <Link to="/debug">Debug</Link>
-          </li>
-        </ul>
-      </nav>
-      <Outlet />
-    </div>
+    <Wrapper>
+      <header className="header">
+        <nav className="row-start">
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/debug">Debug</Link>
+          <Link to="/option">Option</Link>
+        </nav>
+      </header>
+      <main className="main">
+        <Scrollbar>
+          <Outlet />
+          <footer className="footer">SubstanceX © 2023</footer>
+        </Scrollbar>
+      </main>
+    </Wrapper>
   );
-};
+}
 
 export default BasicLayout;
