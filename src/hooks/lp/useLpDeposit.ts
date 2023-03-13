@@ -1,5 +1,5 @@
 import { exchangeContract, TRADE_TOKEN } from '@/configs/common';
-import { getSignatureAndPrice } from '@/server';
+import { getSignatureAndPrice } from '@/services';
 import { USDCAmount, WETHAmount } from '@/typings/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';

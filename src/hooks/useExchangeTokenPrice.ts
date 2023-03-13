@@ -1,6 +1,6 @@
 import { exchangeContract } from '@/configs/common';
 import { recoilExchangeTokenPrice } from '@/models/_global';
-import { getSignatureAndPrice } from '@/server';
+import { getSignatureAndPrice } from '@/services';
 import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';

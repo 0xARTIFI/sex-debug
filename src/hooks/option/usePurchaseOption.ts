@@ -1,6 +1,6 @@
 import { exchangeContract } from '@/configs/common';
 import { recoilOptionEpochIds } from '@/models/_global';
-import { getOptionByPrice } from '@/server';
+import { getOptionByPrice } from '@/services';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { useRecoilValue } from 'recoil';
