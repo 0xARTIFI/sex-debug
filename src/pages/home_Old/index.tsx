@@ -229,4 +229,4 @@ export function Component() {
 
 Component.displayName = 'Home';
 
-// export default Component;
+export default Component;

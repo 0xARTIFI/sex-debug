@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { Outlet, Link } from 'react-router-dom';
 import { Scrollbar } from '@/components';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -17,7 +16,7 @@ const Wrapper = styled.div`
   }
 `;
 
-function BasicLayout() {
+function BasicLayout({ children }: any) {
   return (
     <Wrapper>
       <header className="header">
@@ -30,7 +29,9 @@ function BasicLayout() {
       </header>
       <main className="main">
         <Scrollbar>
-          <Outlet />
+          {children}
+
+          {/* <Outlet /> */}
           <footer className="footer">SubstanceX © 2023</footer>
         </Scrollbar>
       </main>

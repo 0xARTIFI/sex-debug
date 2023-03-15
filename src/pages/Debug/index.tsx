@@ -37,4 +37,4 @@ export function Component() {
 
 Component.displayName = 'Debug';
 
-// export default Debug;
+export default Component;

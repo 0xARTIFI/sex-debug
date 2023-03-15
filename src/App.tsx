@@ -4,7 +4,9 @@ import { RecoilRoot } from 'recoil';
 import { styled } from 'styled-components';
 
 import BasicLayout from '@/layouts/BasicLayout';
-import { Link, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Debug from '@/pages/Debug';
+import { Suspense } from 'react';
+import { createBrowserRouter, Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
   /* height: 100vh;
@@ -67,16 +69,18 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RecoilRoot>
-      <WagmiConfig client={client}>
-        <GlobalStyle />
-        <Wrapper>
-          {/* <Debug /> */}
-          {/* <Home /> */}
-          <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
-        </Wrapper>
-      </WagmiConfig>
-    </RecoilRoot>
+    <Suspense fallback={null}>
+      <RecoilRoot>
+        <WagmiConfig client={client}>
+          <GlobalStyle />
+          <Wrapper>
+            <Debug />
+            {/* <Home /> */}
+            {/* <RouterProvider router={router} fallbackElement={<p>Loading...</p>} /> */}
+          </Wrapper>
+        </WagmiConfig>
+      </RecoilRoot>
+    </Suspense>
   );
 }
 
