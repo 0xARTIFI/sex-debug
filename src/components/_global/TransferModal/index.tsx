@@ -32,7 +32,7 @@ const StyledModal = styled(Modal)`
     }
 
     .disabled-input-container {
-      .md {
+      .lg {
         color: #34384c;
         padding: 0 20px;
 
@@ -55,6 +55,7 @@ const StyledModal = styled(Modal)`
 
     .select {
       width: 100%;
+      z-index: 2;
       img {
         width: 20px;
         height: 20px;
@@ -79,7 +80,7 @@ const StyledModal = styled(Modal)`
     }
 
     .available-input {
-      padding: 0px 20px;
+      padding: 0px 4px 0 20px;
       input {
         color: #e5e6ed;
         padding-right: 4px;
@@ -128,13 +129,13 @@ const TransferModal = ({ visible, onCancel, onOk }: { visible: boolean; onCancel
   const balances = useRecoilValue(recoilBalances);
   const allowances = useRecoilValue(recoilAllowance);
 
-  const availableBalance = useMemo(
-    () =>
+  const availableBalance = useMemo(() => {
+    const cur =
       currentToken?.value === 'WETH'
         ? ethers.utils.formatUnits(balances.WETH_IN_WALLET, 18).toString()
-        : ethers.utils.formatUnits(balances.USDC_IN_WALLET, 18).toString(),
-    [balances, currentToken],
-  );
+        : ethers.utils.formatUnits(balances.USDC_IN_WALLET, 18).toString();
+    return BigNumber(cur).toFixed(4);
+  }, [balances, currentToken]);
 
   const currentAllowance = useMemo(
     () =>
@@ -165,13 +166,14 @@ const TransferModal = ({ visible, onCancel, onOk }: { visible: boolean; onCancel
       <div className="col-start full-width" style={{ gap: '12px' }}>
         <div className="account-container col-start full-width" style={{ gap: '24px' }}>
           <div className="disabled-input-container col-start full-width" style={{ gap: '16px' }}>
-            <Input type="text" className="full-width" value="Your Wallet" disabled />
+            <Input size="lg" type="text" className="full-width" value="Your Wallet" disabled />
             <IconArrowDown />
-            <Input className="full-width" value="Option Account" disabled />
+            <Input size="lg" className="full-width" value="Option Account" disabled />
           </div>
           <TokenSelect onChange={handleChangeCurrentToken} list={basicTokenListData} baseCoin={false} />
           <div className="col-start full-width" style={{ gap: '8px' }}>
             <Input
+              size="lg"
               className="available-input full-width"
               onChange={onChange}
               value={value}

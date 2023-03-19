@@ -19,7 +19,7 @@ const useInputChange = (props: {
         return;
       }
       if (type) {
-        const amount = e.replace(/[^\d]/g, '');
+        const amount = e.replace(/[^\d|.]/g, '');
         setValue(amount);
         return;
       }

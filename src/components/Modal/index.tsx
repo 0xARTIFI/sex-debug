@@ -150,7 +150,13 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     return (
       <div className="header row-between">
         <h4>{title}</h4>
-        {closable && <i className="iconfont icon-select-cancel clear" onClick={handleCancel} />}
+        {closable && (
+          <img
+            src={require('@/assets/images/_global/IconClose.svg')}
+            className="iconfont icon-select-cancel clear"
+            onClick={handleCancel}
+          />
+        )}
       </div>
     );
   }, [forceRender, forceRef, title, closable, handleCancel]);
