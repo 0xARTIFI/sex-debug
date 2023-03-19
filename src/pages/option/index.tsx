@@ -559,8 +559,8 @@ export function Component() {
               }
               items={[
                 { name: 'Active', key: 'active' },
-                { name: 'History ', key: 'history' },
                 { name: 'Settlement ', key: 'settlement' },
+                { name: 'History ', key: 'history' },
               ]}
               onChange={(v) => setTableIndex(v)}
             />
