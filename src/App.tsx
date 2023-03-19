@@ -39,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'perpetual',
-        lazy: () => import('@/pages/perpetual'),
+        lazy: () => import('@/pages/Perpetual'),
       },
       {
         path: 'stake-earn',
