@@ -15,6 +15,9 @@ import CollateralModal from '../CollateralModal';
 import ConfirmCloseModal from '../ConfirmCloseModal';
 
 const Container = styled.li`
+  p {
+    height: 52px;
+  }
   .position {
     height: 52px;
     align-items: center;
@@ -65,7 +68,7 @@ const Positions = ({ ele, indexPrice }: { ele: SinglePositionInterface; indexPri
   return (
     <>
       <Container className="row-start">
-        <p className="row-start  position ">
+        <p className="row-start  position gap-8">
           <img src={curToken?.image} alt="coin" />
           <span className="col-start gap-8 align-start">
             <span>{curToken?.label}</span>
@@ -81,7 +84,7 @@ const Positions = ({ ele, indexPrice }: { ele: SinglePositionInterface; indexPri
         <p>${ele?.entryPrice?.toBFixed(2)}</p>
         <p>${indexPrice?.toBFixed(2)}</p>
         <p>${ele?.liqPrice?.toBFixed(2)}</p>
-        <div className="action row-start">
+        <p className="action row-start">
           <SmartButton onClick={handleClosePosition} className="close" size="sm">
             Close
           </SmartButton>
@@ -97,7 +100,7 @@ const Positions = ({ ele, indexPrice }: { ele: SinglePositionInterface; indexPri
               {/* <li className={`${false ? 'active' : ''}`.trimEnd()}>YYY</li> */}
             </InternalSelect>
           </Select>
-        </div>
+        </p>
       </Container>
       <CollateralModal
         loading={adjustLoading}
