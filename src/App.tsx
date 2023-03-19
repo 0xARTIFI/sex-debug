@@ -2,9 +2,9 @@ import { GlobalStyle } from '@/assets/styles/global';
 import { client, WagmiConfig } from '@/configs/wallet';
 import { GlobalScrollbar } from 'mac-scrollbar';
 import { RecoilRoot } from 'recoil';
-import { styled } from 'styled-components';
+import { styled, ThemeProvider } from 'styled-components';
 
-// import theme from '@/assets/styles/theme';
+import theme from '@/assets/styles/theme';
 import BasicLayout from '@/layouts/BasicLayout';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
@@ -36,14 +36,6 @@ const router = createBrowserRouter([
       {
         path: 'option',
         lazy: () => import('@/pages/option'),
-      },
-      {
-        path: 'perpetual',
-        lazy: () => import('@/pages/perpetual'),
-      },
-      {
-        path: 'stake-earn',
-        lazy: () => import('@/pages/stake-earn'),
       },
       {
         path: 'about',
@@ -82,21 +74,21 @@ const router = createBrowserRouter([
 function App() {
   return (
     <RecoilRoot>
-      {/* <ThemeProvider theme={theme}> */}
-      <WagmiConfig client={client}>
-        <GlobalStyle />
-        <GlobalScrollbar
-          skin="dark"
-          trackStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 0, right: 0, border: 0 })}
-          thumbStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 3 })}
-        />
-        <Wrapper>
-          {/* <Debug /> */}
-          {/* <Home /> */}
-          <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
-        </Wrapper>
-      </WagmiConfig>
-      {/* </ThemeProvider> */}
+      <ThemeProvider theme={theme}>
+        <WagmiConfig client={client}>
+          <GlobalStyle />
+          <GlobalScrollbar
+            skin="dark"
+            trackStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 0, right: 0, border: 0 })}
+            thumbStyle={(horizontal) => ({ [horizontal ? 'height' : 'width']: 3 })}
+          />
+          <Wrapper>
+            {/* <Debug /> */}
+            {/* <Home /> */}
+            <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+          </Wrapper>
+        </WagmiConfig>
+      </ThemeProvider>
     </RecoilRoot>
   );
 }

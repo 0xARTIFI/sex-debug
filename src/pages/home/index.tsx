@@ -17,7 +17,7 @@ const Wrapper = styled.div`
       margin: 0;
       font-family: 'Sofia-Pro';
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 61px;
       line-height: 110%;
       color: #ffffff;
@@ -40,7 +40,7 @@ const Wrapper = styled.div`
       border-radius: 40px;
       font-family: 'Sofia-Pro';
       font-style: normal;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 16px;
       color: #ffffff;
       user-select: none;

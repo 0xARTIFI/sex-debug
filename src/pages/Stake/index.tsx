@@ -165,12 +165,7 @@ const Stake = () => {
         </div>
 
         <div className="col-center gap full-width">
-          <Input
-            suffix={curDirection === TRADE_DIRECTION_ENUM.WITHDRAW ? 'Token' : ''}
-            className="full-width"
-            value={payAmount}
-            onChange={handleAmountChange}
-          />
+          <Input suffix={'Token'} className="full-width" value={payAmount} onChange={handleAmountChange} />
           <div className="row-between full-width gap">
             {curDirection === TRADE_DIRECTION_ENUM.WITHDRAW ? (
               <>

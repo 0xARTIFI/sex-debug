@@ -1,7 +1,6 @@
-import Debug from '@/pages/Debug';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, useRoutes } from 'react-router-dom';
+import { Route, Router, Routes, useRoutes } from 'react-router-dom';
 
 function App(props: any) {
   return (
@@ -24,7 +23,7 @@ function Bar() {
 }
 
 function SuspenseLayout() {
-  const Layout = React.lazy(() => import('@/layouts/BasicLayout'));
+  const Layout = React.lazy(() => import('./Layout'));
   return (
     <React.Suspense fallback={<Loading />}>
       <Layout />
@@ -44,14 +43,6 @@ const routes = [
       {
         path: '/bar',
         element: <Bar />,
-      },
-      {
-        path: '/home',
-        lazy: () => import('@/pages/home_Old'),
-      },
-      {
-        path: '/debug',
-        lazy: <Debug />,
       },
     ],
   },

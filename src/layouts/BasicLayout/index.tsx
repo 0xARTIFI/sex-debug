@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   }
 `;
 
-function BasicLayout({ children }: any) {
+function BasicLayout() {
   return (
     <Wrapper>
       <Interval />

@@ -36,20 +36,6 @@ export const GlobalStyle = styled.createGlobalStyle`
   body {
     background: rgba(20, 21, 24, 1);
   }
-  /* -----------------  涨跌状态  ----------------- */
-  .up {
-    color: #13b0a7 !important;
-    fill: #13b0a7 !important;
-  }
-  .initial {
-    color: #e5e6ed !important;
-    transition: all 0.3s ease-in-out;
-  }
-  .down {
-    color: #d9224f !important;
-    fill: #d9224f !important;
-  }
-  /* -----------------  涨跌状态  ----------------- */
   /* 弹出层容器 */
   #stack-dom {
     position: fixed;

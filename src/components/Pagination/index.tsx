@@ -1,39 +1,52 @@
 import * as React from 'react';
-import { IconPaginationArrowRight, IconPaginationArrowLeft } from '@/assets/icons/IconGroup';
 import styled from 'styled-components';
 
-const Wrapper = styled.ul`
-  gap: 8px;
-  margin-top: 16px;
+const Wrapper = styled.div`
+  /* display: flex;
+  align-items: center; */
+  margin-top: 24px;
   li {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    user-select: none;
-    cursor: pointer;
+    list-style: none;
+  }
+  .iconfont {
     transition: all 0.3s ease-in;
-    svg {
-      fill: rgba(255, 255, 255, 0.85);
+    color: ${(props) => props.theme.textColorPrimary};
+  }
+  .prev,
+  .next {
+    cursor: pointer;
+    .iconfont {
       transition: all 0.3s ease-in;
     }
-    &.selected,
-    &:not(.disabled, .omit):hover {
-      background: #54678b;
+    &.disabled {
+      cursor: not-allowed;
+      .iconfont {
+        color: ${(props) => props.theme.disabledColorPrimary};
+      }
     }
   }
-  .item {
-    font-size: 14px;
-    color: #9cadcd;
+  .prev {
+    margin-right: 6px;
+  }
+  .next {
+    margin-left: 2px;
+  }
+  .pageItem {
+    width: 28px;
+    height: 28px;
+    margin-right: 4px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 12px;
+    color: ${(props) => props.theme.textColorPrimary};
     transition: all 0.3s ease-in;
-  }
-  .selected {
-    font-weight: 600;
-    color: #e5e6ed;
-  }
-  .disabled {
-    cursor: not-allowed;
-    svg {
-      fill: rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+    &:hover,
+    &.selected {
+      &:not(.omit) {
+        cursor: pointer;
+        background-color: ${(props) => props.theme.backgroundColorSecond};
+      }
     }
   }
 `;
@@ -59,7 +72,7 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
   }, [pageSize, total]);
 
   const pageClick = React.useCallback(
-    (num: number) => {
+    (num) => {
       // 当当前页码大于分组的页码时，使当前页前面显示两个页码
       if (num >= groupCount) {
         setStartPage(num - 2);
@@ -80,30 +93,30 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
   const renderPrev = React.useMemo(() => {
     const disabled = currentPage <= 1;
     return (
-      <li
-        className={`row-center ${disabled ? 'disabled' : ''}`.trimEnd()}
+      <p
+        className={`prev ${disabled ? 'disabled' : ''}`}
         onClick={() => {
           if (disabled) return;
           pageClick(currentPage - 1);
         }}
       >
-        <IconPaginationArrowRight />
-      </li>
+        <i className="iconfont icon-arrow-left" />
+      </p>
     );
   }, [currentPage, pageClick]);
 
   const renderNext = React.useMemo(() => {
     const disabled = currentPage >= totalPage;
     return (
-      <li
-        className={`row-center ${disabled ? 'disabled' : ''}`.trimEnd()}
+      <p
+        className={`next ${disabled ? 'disabled' : ''}`}
         onClick={() => {
           if (disabled) return;
           pageClick(currentPage + 1);
         }}
       >
-        <IconPaginationArrowLeft />
-      </li>
+        <i className="iconfont icon-arrow-right" />
+      </p>
     );
   }, [currentPage, pageClick, totalPage]);
 
@@ -112,14 +125,27 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
     for (let i = 0; i < totalPage; i++) {
       pageListArr.push(i + 1);
     }
+    // if (totalPage < showOmit) {
+    //   return pageListArr.map((item: number) => (
+    //     <p
+    //       key={item}
+    //       className={`pageItem ${pageItem === currentPage && 'selected'}`}
+    //       onClick={() => {
+    //         pageClick(item);
+    //       }}
+    //     >
+    //       {item}
+    //     </p>
+    //   ));
+    // }
 
     const pages: React.ReactNode[] = [];
 
     // 首页
     pages.push(
-      <li className={`item row-center ${currentPage === 1 ? 'selected' : ''}`} key={1} onClick={() => pageClick(1)}>
+      <p className={`pageItem ${currentPage === 1 ? 'selected' : ''}`} key={1} onClick={() => pageClick(1)}>
         1
-      </li>,
+      </p>,
     );
 
     let pageLength = 0;
@@ -132,15 +158,15 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
     // 左省略
     if (currentPage >= groupCount) {
       pages.push(
-        <li
-          className="item row-center omit"
+        <p
+          className="pageItem omit"
           key={-1}
           onClick={() => {
             pageClick(Math.max(1, currentPage - groupCount));
           }}
         >
           ...
-        </li>,
+        </p>,
       );
     }
 
@@ -148,9 +174,9 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
     for (let i = startPage; i < pageLength; i++) {
       if (i <= totalPage - 1 && i > 1) {
         pages.push(
-          <li className={`item row-center ${currentPage === i ? 'selected' : ''}`} key={i} onClick={() => pageClick(i)}>
+          <p className={`pageItem ${currentPage === i ? 'selected' : ''}`} key={i} onClick={() => pageClick(i)}>
             {i}
-          </li>,
+          </p>,
         );
       }
     }
@@ -158,26 +184,26 @@ const Pagination: React.FC<PaginationProps> = (props: PaginationProps) => {
     // 右省略
     if (totalPage - startPage >= groupCount + 1) {
       pages.push(
-        <li
-          className="item row-center omit"
+        <p
+          className="pageItem omit"
           key={-2}
           onClick={() => {
             pageClick(Math.min(Math.floor((total - 1) / pageSize) + 1, currentPage + groupCount));
           }}
         >
           ...
-        </li>,
+        </p>,
       );
     }
     // 末页
     pages.push(
-      <li
-        className={`item row-center ${currentPage === totalPage ? 'selected' : ''}`}
+      <p
+        className={`pageItem ${currentPage === totalPage ? 'selected' : ''}`}
         key={totalPage}
         onClick={() => pageClick(totalPage)}
       >
         {totalPage}
-      </li>,
+      </p>,
     );
 
     return pages.map((item) => item);

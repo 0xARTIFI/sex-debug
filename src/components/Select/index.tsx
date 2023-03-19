@@ -188,7 +188,6 @@ export interface SelectProps {
   placement?: DropdownPlacement;
   children?: React.ReactNode;
   follow?: boolean;
-  arrow?: boolean;
   size?: SizeType;
   danger?: boolean;
   disabled?: boolean;
@@ -268,7 +267,6 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
   const {
     className,
     follow = false,
-    arrow = true,
     size = 'md',
     danger = false,
     disabled = false,
@@ -313,7 +311,7 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
       <Wrapper className={classes} ref={followRef} onClick={handleOpen}>
         <div className="inside row-between">
           {memoElement}
-          {arrow && <IconSelectArrow className="arrow" />}
+          <IconSelectArrow className="arrow" />
         </div>
       </Wrapper>
       <AnimatePresence>{visible && <Portal {...props} followRef={followRef} onClose={handleClose} />}</AnimatePresence>
