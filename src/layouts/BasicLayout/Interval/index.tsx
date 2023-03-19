@@ -2,6 +2,7 @@ import useLpTokenBalance from '@/hooks/lp/useLpTokenBalance';
 import useFetchOptionPositions from '@/hooks/option/useFetchOptionPositions';
 import useOptionsActiveEpochId from '@/hooks/option/useOptionsActiveEpochId';
 import useExchangeFuturePrice from '@/hooks/perpetual/useExchangeFuturePrice';
+import useFetchPerpetualPositions from '@/hooks/perpetual/useFetchPerpetualPositions';
 import useAuth from '@/hooks/useAuth';
 import useBalances from '@/hooks/useBalances';
 import { recoilOptionEpochIds } from '@/models/_global';
@@ -17,12 +18,18 @@ const Interval = () => {
   const { run: getFuturePrice } = useExchangeFuturePrice();
   const { run: getLpBanlances } = useLpTokenBalance();
 
-  // option
+  // public
   const { run: getOptionsActiveEpochId } = useOptionsActiveEpochId();
   const [interval, setInterval] = React.useState<undefined | number>(undefined);
+
+  // option
   const [optionInterval, setOptionInterval] = React.useState<undefined | number>(undefined);
   const { run: fetchOptionPositionsRun } = useFetchOptionPositions();
   const { startEpochId, endEpochId } = useRecoilValue(recoilOptionEpochIds);
+
+  // perpetual
+  const { run: fetchPerpetualPositionsRun } = useFetchPerpetualPositions();
+  const [perpetualInterval, setPerpetualInterval] = React.useState<undefined | number>(undefined);
 
   const publicBatchFetch = React.useCallback(() => {
     getLpBanlances();
@@ -36,6 +43,10 @@ const Interval = () => {
   const optionsBatchFetch = React.useCallback(() => {
     getOptionsActiveEpochId();
   }, [getOptionsActiveEpochId]);
+
+  const perpetualBatchFetch = React.useCallback(() => {
+    fetchPerpetualPositionsRun();
+  }, [fetchPerpetualPositionsRun]);
 
   // public
   React.useEffect(() => {
@@ -64,6 +75,20 @@ const Interval = () => {
   useInterval(() => {
     optionsBatchFetch();
   }, optionInterval);
+
+  // perprtual
+  React.useEffect(() => {
+    if (pathname.includes('perpetual') && isConnected) {
+      perpetualBatchFetch();
+      setPerpetualInterval(20000);
+    } else {
+      setPerpetualInterval(undefined);
+    }
+  }, [isConnected, pathname, perpetualBatchFetch]);
+
+  useInterval(() => {
+    perpetualBatchFetch();
+  }, perpetualInterval);
 
   return null;
 };

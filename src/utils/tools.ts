@@ -1,5 +1,6 @@
 /* eslint-disable no-multi-assign */
 /* eslint-disable no-extend-native */
+import { TRADE_DIRECTION_ENUM } from '@/configs/common';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import UTC from 'dayjs/plugin/utc';
@@ -122,4 +123,39 @@ String.prototype.toBFixed = function (_decimal = 2) {
   const decimal = fraction.split('').findIndex((i) => i !== '0') + _decimal;
 
   return temp.toFixed(decimal, BigNumber.ROUND_DOWN);
+};
+
+// 维持保证金率
+export const maintenanceMarginRate = 0.05;
+// 强平保证金率
+export const liqMarginRate = 0.02;
+
+// * @param N originCollateral 2个
+// * @param n sizePrice 400U
+// * @param entryPrice 开仓价 1600U
+// 强平价格公式
+export const getLiqPrice = ({ S1, n, N, dir = TRADE_DIRECTION_ENUM.LONG }: any) => {
+  if (!S1 || !n || !N) return '0.00';
+
+  // (S1 + n/N)/(1+ 强平保证金率)
+  if (dir === TRADE_DIRECTION_ENUM.SHORT) {
+    return BigNumber(BigNumber(S1).plus(BigNumber(BigNumber(n).multipliedBy(S1)).div(N)))
+      .div(BigNumber(liqMarginRate).plus(1))
+      .toString();
+  }
+
+  // （1+0.02)/（1/S1 + originCollateral /（张数*面值））
+  return BigNumber(1 + liqMarginRate)
+    .div(BigNumber(1).div(S1).plus(BigNumber(n).div(N).div(S1)))
+    .toString();
+};
+
+export const filterColor = (params: 0 | 1 | 2) => {
+  if (params === 0) {
+    return 'up';
+  }
+  if (params === 1) {
+    return 'down';
+  }
+  return 'initial';
 };

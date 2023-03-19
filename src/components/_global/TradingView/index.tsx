@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
@@ -6,9 +6,10 @@ import UTC from 'dayjs/plugin/utc';
 // import { getOverrides, getStudiesOverrides, mainBg } from './chartTheme';
 import { IChartingLibraryWidget, ResolutionString, Timezone, widget } from 'charting_library';
 // import { IChartingLibraryWidget, ResolutionString, Timezone, widget } from '../../../../public/charting_library';
-import { recoilKlinePrice } from '@/models/_global';
+import { recoilExchangeFuturePrice, recoilKlinePrice } from '@/models/_global';
 import { useMount, useUnmount } from 'ahooks';
-import { useSetRecoilState } from 'recoil';
+import BigNumber from 'bignumber.js';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { Datafeed } from './Datafeed';
 import { useGenGetBars, useGenSubscribeBars, useGenUnsubscribeBars } from './genBars';
 import { getSymbols } from './genSymbols';
@@ -20,7 +21,21 @@ dayjs.extend(timezone);
 const GLOBAL_COMPONENT_NAME = 'TestTVChartComponent';
 
 const TVChart = ({ disabled_features }: { disabled_features?: any[] }) => {
+  const { futurePrice } = useRecoilValue(recoilExchangeFuturePrice);
   const setPrice = useSetRecoilState(recoilKlinePrice);
+
+  useEffect(() => {
+    if (futurePrice) {
+      setPrice((old: any) => {
+        const _old = JSON.parse(JSON.stringify(old));
+        return {
+          ..._old,
+          indexPrice: BigNumber(futurePrice).div(100).toString(),
+        };
+      });
+    }
+  }, [futurePrice]);
+
   // const [prices, setPrices] = useState({
   //   priceChangeRate: 0,
   //   priceHigh: 0,
@@ -128,11 +143,15 @@ const TVChart = ({ disabled_features }: { disabled_features?: any[] }) => {
         const priceHigh = Math.max(...fullClosePrice);
         const priceLow = Math.min(...fullClosePrice);
 
-        setPrice({
-          priceChangeRate,
-          priceHigh,
-          priceLow,
-          indexPrice: latestPrice,
+        setPrice((old: any) => {
+          const _old = JSON.parse(JSON.stringify(old));
+          return {
+            ..._old,
+            priceChangeRate,
+            priceHigh,
+            priceLow,
+            currentPrice: latestPrice,
+          };
         });
 
         // k线更新
@@ -142,7 +161,7 @@ const TVChart = ({ disabled_features }: { disabled_features?: any[] }) => {
 
           setPrice((old: any) => ({
             ...old,
-            indexPrice: latestPrice,
+            currentPrice: latestPrice,
           }));
         });
       });

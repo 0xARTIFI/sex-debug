@@ -1,37 +1,39 @@
+import { message } from '@/components';
+import { LeverageLongContaact, LeverageShortContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
+import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
-import Toast from '../components/Toast';
-import { futureLongContractAddr, futureShortContractAddr } from '../config';
-import futureShortAbi from '../constants/abis/future.json';
-import futureLongAbi from '../constants/abis/futureLong.json';
-import { tradeDirection } from '../pages/future';
-import ToastRetryContainer from '../pages/future/ToastRetryContainer';
-import { useContract } from './useContract';
+import { ethers } from 'ethers';
+import { useEffect } from 'react';
+import useAuth from '../useAuth';
+import useFetchPerpetualPositions from './useFetchPerpetualPositions';
 
-const useAdjustMargin = ({ direction }: { direction: string }) => {
-  const futureContract = useContract(
-    direction === tradeDirection.SHORT ? futureShortContractAddr : futureLongContractAddr,
-    direction === tradeDirection.SHORT ? futureShortAbi : futureLongAbi,
-  );
+const useAdjustMargin = () => {
+  const { address } = useAuth(true);
+  const { run: fetchPositions } = useFetchPerpetualPositions();
 
   // marginAmount为调整的保证金的数量，永远 >= 0，inc为是增是减, true=增, false=减
-  const adjustMargin = async (marginAmount: any, inc: any) => {
-    if (!futureContract || !marginAmount) return null;
-    const params = [marginAmount, inc];
+  const adjustMargin = async (direction: TRADE_DIRECTION_ENUM, marginAmount: any, indexPrice: any) => {
+    if (!marginAmount || !indexPrice) return null;
+    const _amount = ethers.utils.parseUnits(marginAmount, direction === TRADE_DIRECTION_ENUM.SHORT ? 6 : 9);
+    const params = [_amount, indexPrice, address];
+    const curDirContract = direction === TRADE_DIRECTION_ENUM.SHORT ? LeverageShortContract : LeverageLongContaact;
+
     console.log('调整保证金参数', params);
+
     try {
-      const res = await futureContract.userAdjustMarginAmount(...params);
-      const confirmation = await res.wait();
-      if (confirmation?.status) {
-        Toast.success('Transaction processed successfully.');
-      }
-      console.log('tx', confirmation);
-      return confirmation;
-    } catch (e) {
-      // @ts-ignore
-      const { code, action, reason } = e;
-      console.log('code, action, reason', code, action, reason);
-      Toast.error(<ToastRetryContainer message={reason} onClick={() => adjustMargin(marginAmount, inc)} />);
-      return null;
+      const config = await prepareWriteContract({
+        ...curDirContract,
+        functionName: 'userAdjustMarginAmount',
+        args: [...params],
+      });
+      console.log('config', config);
+      const tx = await writeContract(config);
+      const res = await tx.wait();
+      fetchPositions();
+      return res;
+    } catch (e: any) {
+      console.log('e', e?.message);
+      throw Error(e?.message);
     }
   };
 
@@ -39,12 +41,25 @@ const useAdjustMargin = ({ direction }: { direction: string }) => {
     loading: adjustMarginLoading,
     run: adjustMarginRun,
     data: adjustMarginData,
+    error: adjustMarginError,
   } = useRequest(adjustMargin, { manual: true });
 
+  useEffect(() => {
+    if (adjustMarginData) {
+      message.success('Success');
+    }
+  }, [adjustMarginData]);
+
+  useEffect(() => {
+    if (adjustMarginError) {
+      message.error(adjustMarginError?.message);
+    }
+  }, [adjustMarginError]);
+
   return {
-    adjustMarginLoading,
-    adjustMarginRun,
-    adjustMarginData,
+    loading: adjustMarginLoading,
+    run: adjustMarginRun,
+    data: adjustMarginData,
   };
 };
 

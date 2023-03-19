@@ -82,6 +82,37 @@
       {
         "indexed": false,
         "internalType": "int256",
+        "name": "fromAmount",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "toAmount",
+        "type": "int256"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
+        "name": "currencyType",
+        "type": "int256"
+      }
+    ],
+    "name": "SwapSuccess",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "int256",
         "name": "tokenInc",
         "type": "int256"
       },
@@ -430,6 +461,32 @@
   {
     "inputs": [
       {
+        "internalType": "int256",
+        "name": "wethMarginAmount",
+        "type": "int256"
+      }
+    ],
+    "name": "traderChangeLongOrderMargin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "usdcMarginAmount",
+        "type": "int256"
+      }
+    ],
+    "name": "traderChangeShortOrderMargin",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256[]",
         "name": "epochIds",
         "type": "uint256[]"
@@ -529,6 +586,32 @@
       }
     ],
     "name": "traderOpenShortOrder",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "usdcAmount",
+        "type": "int256"
+      }
+    ],
+    "name": "traderUSDCSwapWETH",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "int256",
+        "name": "wethAmount",
+        "type": "int256"
+      }
+    ],
+    "name": "traderWETHSwapUSDC",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 
 const Container = styled.div`
   .label {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 16px;
     line-height: 120%;
     color: #54678b;

@@ -220,14 +220,12 @@ function Header() {
             <NavLink className={({ isActive }) => (isActive ? 'active' : 'default')} to="/option">
               Option
             </NavLink>
-            {/* <NavLink className={({ isActive }) => (isActive ? 'active' : 'default')} to="/debug">
-            Perpetual
-          </NavLink>
-          <NavLink className={({ isActive }) => (isActive ? 'active' : 'default')} to="/about">
-            Stake & Earn
-          </NavLink> */}
-            <a className="disabled">Perpetual</a>
-            <a className="disabled">Stake & Earn</a>
+            <NavLink className={({ isActive }) => (isActive ? 'active' : 'default')} to="/perpetual">
+              Perpetual
+            </NavLink>
+            <NavLink className={({ isActive }) => (isActive ? 'active' : 'default')} to="/stake-earn">
+              Stake & Earn
+            </NavLink>
             <a className="disabled">Dashboard</a>
             <a className="disabled">Doc</a>
           </nav>

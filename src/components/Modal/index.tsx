@@ -2,6 +2,7 @@ import { maskConfig, modalConfig } from '@/configs/motion';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as React from 'react';
+import { IconModalClose } from '@/assets/icons/IconGroup';
 import { createPortal } from 'react-dom';
 import { RemoveScroll } from 'react-remove-scroll';
 import styled from 'styled-components';
@@ -15,62 +16,52 @@ const PortalWrapper = styled(motion.div)`
   bottom: 0;
   left: 0;
   z-index: 999998;
-
   &.mask {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.65);
   }
   &.scroll {
     margin: 0 auto;
     width: fit-content;
   }
-  > .inner-modal {
+  > .inside {
     max-height: 88vh;
-    background: ${(props) => props.theme.modalBackgroundColorSex};
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 9px 28px rgba(0, 0, 0, 0.05), 0px 12px 48px rgba(0, 0, 0, 0.03);
-    border-radius: ${(props) => props.theme.modalRadiusSex};
+    background: #242731;
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
     overflow: hidden;
-    transition: all 0.3s ease-in-out;
     .header {
-      padding: 0 8px;
-      height: 54px;
-      border-bottom: 1px solid ${(props) => props.theme.modalHeaderBorderColorSex};
-      transition: all 0.3s ease-in-out;
+      padding: 0 24px;
+      height: 56px;
+      border-bottom: 1px solid #34384c;
       h4 {
-        flex: 1;
-        padding-left: 24px;
-        text-align: left;
-        font-weight: 700;
+        font-weight: 600;
         font-size: 20px;
-        line-height: 120%;
-        color: ${(props) => props.theme.modalColorSex};
-        transition: all 0.3s ease-in-out;
+        color: rgba(255, 255, 255, 0.85);
       }
       .clear {
-        padding: 6px;
-        font-size: 12px;
-        font-weight: bold;
-        color: ${(props) => props.theme.modalColorSex};
+        padding: 4px;
+        width: 24px;
+        height: 24px;
+        fill: rgba(255, 255, 255, 0.45);
         border-radius: 50%;
         user-select: none;
         cursor: pointer;
         transition: all 0.3s ease-in-out;
         &:hover {
-          color: #00ba3d;
-          background: rgba(0, 186, 61, 0.1);
+          fill: #0e4bc3;
+          background: rgba(49, 110, 216, 0.1);
         }
       }
     }
     .content {
-      padding: 24px;
       .ms-container {
         max-height: inherit;
       }
     }
     .footer {
-      padding: 20px 20px 36px 20px;
-      button + button {
-        margin-left: 32px;
-      }
+      gap: 32px;
+      padding: 12px 24px 24px 24px;
     }
   }
 `;
@@ -118,7 +109,7 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
   const forceRef = React.useRef<HTMLDivElement>(null);
 
   const handleCancel = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    (e: React.MouseEvent<HTMLButtonElement | HTMLOrSVGElement>) => {
       onCancel?.(e);
     },
     [onCancel],
@@ -150,13 +141,7 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     return (
       <div className="header row-between">
         <h4>{title}</h4>
-        {closable && (
-          <img
-            src={require('@/assets/images/_global/IconClose.svg')}
-            className="iconfont icon-select-cancel clear"
-            onClick={handleCancel}
-          />
-        )}
+        {closable && <IconModalClose className="clear" onClick={handleCancel} />}
       </div>
     );
   }, [forceRender, forceRef, title, closable, handleCancel]);
@@ -182,10 +167,10 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
   const memoElement = React.useMemo(() => {
     const renderPortal = (
       <PortalWrapper className={classes} {...maskConfig}>
-        <motion.div className="inner-modal" {...modalConfig}>
+        <motion.div className="inside" {...modalConfig}>
           {renderHeader}
-          <div className="content" style={{ maxHeight: `calc(88vh - 152px - ${forceHeight}px)` }}>
-            <Scrollbar>{cloneElement(children)}</Scrollbar>
+          <div className="content" style={{ maxHeight: `calc(88vh - 132px - ${forceHeight}px)` }}>
+            <Scrollbar trackGap={[20, 20, 20, 20]}>{cloneElement(children)}</Scrollbar>
           </div>
           {renderFooter}
         </motion.div>

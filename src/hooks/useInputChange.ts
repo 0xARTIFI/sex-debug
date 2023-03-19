@@ -15,7 +15,7 @@ const useInputChange = (props: {
       callback(e, setValue);
     } else {
       if (max && BigNumber(max).lte(e)) {
-        setValue(max);
+        setValue(BigNumber(max).toNumber());
         return;
       }
       if (type) {
@@ -29,7 +29,7 @@ const useInputChange = (props: {
 
   const handleMax = () => {
     if (!max) return null;
-    handleChange(max);
+    handleChange(BigNumber(max).toNumber());
     return null;
   };
 

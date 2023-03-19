@@ -62,7 +62,7 @@ const Wrapper = styled.div`
     cursor: pointer;
     cursor: grab;
     transition: border-color 0.3s ease-in-out, outline 0.3s ease-in-out;
-    z-index: 2;
+    z-index: 1;
     &:hover {
       border: 3px solid #316ed8;
     }

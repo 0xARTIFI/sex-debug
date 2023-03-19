@@ -92,6 +92,8 @@ export const recoilExchangeFuturePrice = atom<{
   },
 });
 
+// todo redesign
+// 支持多币种
 export const recoilPerpetualPositions = atom<PositionsInterface>({
   key: 'perpetualPositions',
   default: {
@@ -159,5 +161,6 @@ export const recoilKlinePrice = atom<any>({
     priceHigh: 0,
     priceLow: 0,
     indexPrice: 0,
+    currentPrice: 0,
   },
 });

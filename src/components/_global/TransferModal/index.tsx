@@ -16,7 +16,7 @@ import SmartButton from '../SmartButton';
 import TokenSelect from '../TokenSelect';
 
 const StyledModal = styled(Modal)`
-  .inner-modal {
+  > .inside {
     width: 360px;
     background: #242731;
     box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
@@ -25,7 +25,7 @@ const StyledModal = styled(Modal)`
     .header {
       border-color: #34384c;
       h4 {
-        padding-left: 16px;
+        /* padding-left: 16px; */
         text-align: left;
         color: rgba(255, 255, 255, 0.85);
       }
@@ -55,7 +55,6 @@ const StyledModal = styled(Modal)`
 
     .select {
       width: 100%;
-      z-index: 2;
       img {
         width: 20px;
         height: 20px;
@@ -134,7 +133,7 @@ const TransferModal = ({ visible, onCancel, onOk }: { visible: boolean; onCancel
       currentToken?.value === 'WETH'
         ? ethers.utils.formatUnits(balances.WETH_IN_WALLET, 18).toString()
         : ethers.utils.formatUnits(balances.USDC_IN_WALLET, 18).toString();
-    return BigNumber(cur).toFixed(4);
+    return BigNumber(cur).toFixed(4, BigNumber.ROUND_DOWN);
   }, [balances, currentToken]);
 
   const currentAllowance = useMemo(

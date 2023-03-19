@@ -5,13 +5,12 @@ import { multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useAccount } from 'wagmi';
 
 // 强平保证金率
 const liqRate = 0.02;
-let hasRuned = false;
 
 const useFetchPerpetualPositions = () => {
   const { tokenPrice } = useRecoilValue(recoilExchangeTokenPrice);
@@ -66,25 +65,35 @@ const useFetchPerpetualPositions = () => {
 
     if (!positionMultiCallResult?.length) return null;
 
-    console.log('positionMultiCallResult', positionMultiCallResult);
-
     // 多单仓位
     const longFutureContractRes: any[] = positionMultiCallResult[0];
     // 空单仓位
     const shortFutureContractRes: any[] = positionMultiCallResult[1];
 
-    // [开仓均价, 开仓数量, 保证金数量, side]
-    if (!longFutureContractRes.length || !longFutureContractRes[1] || !longFutureContractRes[2]) return;
-    const entryPriceLong = ethers.BigNumber.from(longFutureContractRes[0])?.toString();
-    const tokenAmountLong = ethers.utils.formatUnits(longFutureContractRes[1], 0)?.toString();
-    const marginAmountLong = ethers.utils.formatUnits(longFutureContractRes[2], 6)?.toString();
-    const traderLongPosition = [entryPriceLong, tokenAmountLong, marginAmountLong, TRADE_DIRECTION_ENUM.LONG];
+    let traderLongPosition: string[] = [];
+    let traderShortPosition: string[] = [];
 
-    if (!shortFutureContractRes.length || !shortFutureContractRes[1] || !shortFutureContractRes[2]) return;
-    const entryPriceShort = ethers.BigNumber.from(shortFutureContractRes[0])?.toString();
-    const tokenAmountShort = ethers.utils.formatUnits(shortFutureContractRes[1], 0)?.toString();
-    const marginAmountShort = ethers.utils.formatUnits(shortFutureContractRes[2], 6)?.toString();
-    const traderShortPosition = [entryPriceShort, tokenAmountShort, marginAmountShort, TRADE_DIRECTION_ENUM.SHORT];
+    // [开仓均价, 开仓数量, 保证金数量, side]
+    if (longFutureContractRes.length && longFutureContractRes[1] && longFutureContractRes[2]) {
+      const entryPriceLong = ethers.BigNumber.from(longFutureContractRes[0])?.toString();
+      const tokenAmountLong = ethers.utils.formatUnits(longFutureContractRes[1], 0)?.toString();
+      const marginAmountLong = ethers.utils.formatUnits(longFutureContractRes[2], 6)?.toString();
+      traderLongPosition = [entryPriceLong, tokenAmountLong, marginAmountLong, TRADE_DIRECTION_ENUM.LONG];
+
+      if (BigNumber(tokenAmountLong).isZero()) {
+        initPosition(TRADE_DIRECTION_ENUM.LONG);
+      }
+    }
+    if (shortFutureContractRes.length && shortFutureContractRes[1] && shortFutureContractRes[2]) {
+      const entryPriceShort = ethers.BigNumber.from(shortFutureContractRes[0])?.toString();
+      const tokenAmountShort = ethers.utils.formatUnits(shortFutureContractRes[1], 0)?.toString();
+      const marginAmountShort = ethers.utils.formatUnits(shortFutureContractRes[2], 6)?.toString();
+      traderShortPosition = [entryPriceShort, tokenAmountShort, marginAmountShort, TRADE_DIRECTION_ENUM.SHORT];
+
+      if (BigNumber(tokenAmountShort).isZero()) {
+        initPosition(TRADE_DIRECTION_ENUM.SHORT);
+      }
+    }
 
     return {
       [TRADE_DIRECTION_ENUM.LONG]: [...traderLongPosition],
@@ -105,10 +114,9 @@ const useFetchPerpetualPositions = () => {
       !longPosition?.length ||
       BigNumber(longPosition[1]).isNaN() ||
       BigNumber(longPosition[1]).lte(0) ||
-      !futurePrice ||
-      !tokenPrice
+      !futurePrice
     ) {
-      initPosition(TRADE_DIRECTION_ENUM.LONG);
+      // initPosition(TRADE_DIRECTION_ENUM.LONG);
       return undefined;
     }
 
@@ -173,7 +181,7 @@ const useFetchPerpetualPositions = () => {
     });
 
     return params;
-  }, [futurePrice, tokenPrice, longPosition]);
+  }, [futurePrice, longPosition]);
 
   const shortPositionParams = useMemo(() => {
     if (
@@ -181,10 +189,9 @@ const useFetchPerpetualPositions = () => {
       !shortPosition?.length ||
       BigNumber(shortPosition[1]).isNaN() ||
       BigNumber(shortPosition[1]).lte(0) ||
-      !futurePrice ||
-      !tokenPrice
+      !futurePrice
     ) {
-      initPosition(TRADE_DIRECTION_ENUM.SHORT);
+      // initPosition(TRADE_DIRECTION_ENUM.SHORT);
       return undefined;
     }
     const originCurrentPrice = BigNumber(futurePrice).multipliedBy(1).toString();
@@ -247,14 +254,14 @@ const useFetchPerpetualPositions = () => {
     console.table(params);
 
     return params;
-  }, [futurePrice, tokenPrice, shortPosition]);
+  }, [futurePrice, shortPosition]);
 
-  useEffect(() => {
-    if (address && !hasRuned) {
-      hasRuned = true;
-      run();
-    }
-  }, [address, run]);
+  // useEffect(() => {
+  //   if (address && !hasRuned) {
+  //     hasRuned = true;
+  //     run();
+  //   }
+  // }, [address, run]);
 
   // useUnmount(() => {
   //   hasRuned = false;

@@ -13,7 +13,7 @@ import useFetchPerpetualPositions from './useFetchPerpetualPositions';
 const useClosePositon = () => {
   const { run: fetchPositions } = useFetchPerpetualPositions();
 
-  const closePosition = async (direction: TRADE_DIRECTION_ENUM, tokenAmount: number, entreyPrice: number) => {
+  const closePosition = async (direction: TRADE_DIRECTION_ENUM, tokenAmount: number | string) => {
     if (!tokenAmount) throw new Error('Invalid Amount');
 
     let tokenAmountSize: BigNumber | number | string = BigNumber(0);

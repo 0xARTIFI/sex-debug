@@ -58,4 +58,5 @@ export enum TRADE_DIRECTION_ENUM {
 export enum TRADE_TOKEN {
   USDC = 'USDC',
   WETH = 'WETH',
+  ETH = 'ETH',
 }

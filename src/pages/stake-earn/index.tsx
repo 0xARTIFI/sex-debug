@@ -1,41 +1,36 @@
-/* eslint-disable @iceworks/best-practices/recommend-polyfill */
-/* eslint-disable function-paren-newline */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable @typescript-eslint/indent */
 /* eslint-disable no-nested-ternary */
-import { IconModalError, IconModalSuccess } from '@/assets/icons/IconGroup';
-import { Button, Input, Modal, Pagination, Scrollbar, Select, Slider, Table, Tabs } from '@/components';
+import { Input, Scrollbar, Select, Slider, Table, Tabs, Pagination, Modal } from '@/components';
 import { SmartButton } from '@/components/_global';
 import TokenSelect from '@/components/_global/TokenSelect';
 import TVChart from '@/components/_global/TradingView';
-import { TRADE_DIRECTION_ENUM, TRADE_TOKEN } from '@/configs/common';
+import { TRADE_DIRECTION_ENUM } from '@/configs/common';
 import useOptionExerciseDate from '@/hooks/option/useOptionExerciseDate';
 import useOptionPriceMap from '@/hooks/option/useOptionPriceMap';
 import useOptionReedem from '@/hooks/option/useOptionReedem';
 import useInputChange from '@/hooks/useInputChange';
 import {
-  recoilBalances,
   recoilKlinePrice,
   recoilOptionEpochIds,
-  recoilPerpetualPositions,
   recoilPoolBalances,
   recoilSettledOptionPositions,
   recoilUnsettledOptionPositions,
 } from '@/models/_global';
-import { PositionsInterface, SinglePositionInterface } from '@/typings/_global';
-import { filterColor, getLiqPrice } from '@/utils/tools';
+import { filterThousands } from '@/utils/tools';
 import { useBoolean, useCountDown, useInterval } from 'ahooks';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
+import classNames from 'classnames';
+import { IconModalSuccess, IconModalError } from '@/assets/icons/IconGroup';
 import * as React from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import Confirm, { TradePerpetualInformation } from './components/Confirm';
-import Fields from './components/Fields';
+import ConfirmModal from './components/ConfirmModal';
+import Positions from './components/Positions';
 
 const { TableHead, TableBody } = Table;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ choose: 'CALL' | 'PUT' }>`
   display: flex;
   align-items: stretch;
   padding: 24px;
@@ -101,6 +96,9 @@ const Wrapper = styled.div`
         height: 24px;
         border-radius: 50%;
       }
+      .unique {
+        color: #13b0a7 !important;
+      }
     }
   }
   .contract-declare > .chart {
@@ -138,6 +136,9 @@ const Wrapper = styled.div`
         background: #34384c;
         border-radius: 16px;
       }
+    }
+    .unique {
+      color: #13b0a7 !important;
     }
     .table {
       .thead {
@@ -182,34 +183,32 @@ const Wrapper = styled.div`
       .thead,
       .tbody {
         /* 每一个单独设置*/
-        min-width: 988px;
+        min-width: 934px;
         p:nth-child(1) {
           flex: 1 0 148px;
           padding-left: 16px;
         }
         p:nth-child(2) {
-          flex: 1 0 100px;
+          flex: 1 0 88px;
         }
         p:nth-child(3) {
-          flex: 1 0 90px;
+          flex: 1 0 118px;
         }
         p:nth-child(4) {
-          flex: 1 0 110px;
+          flex: 1 0 140px;
         }
         p:nth-child(5) {
-          flex: 1 0 120px;
+          flex: 1 0 140px;
         }
         p:nth-child(6) {
           flex: 1 0 120px;
         }
         p:nth-child(7) {
-          flex: 1 0 100px;
+          flex: 1 0 80px;
         }
         p:nth-child(8) {
           flex: 1 0 100px;
-        }
-        .action {
-          flex: 1 0 100px;
+          padding-right: 16px;
         }
       }
       .tbody {
@@ -218,34 +217,6 @@ const Wrapper = styled.div`
           width: 16px;
           height: 16px;
           border-radius: 50%;
-        }
-        .action {
-          gap: 16px;
-          .close {
-            padding: 0 8px;
-            width: max-content;
-          }
-          .more {
-            padding: 0;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            svg:hover {
-              fill: #316ed8;
-            }
-          }
-          svg {
-            width: 16px;
-            height: 17px;
-            fill: #e5e6ed;
-            transition: all 0.3s ease-in-out;
-          }
-        }
-        .select {
-          border: none;
-          .inside {
-            padding: 0;
-          }
         }
       }
     }
@@ -283,7 +254,7 @@ const Wrapper = styled.div`
         transition: all 0.3s ease-in-out;
       }
     }
-    .long {
+    .call {
       li:nth-child(2) {
         color: rgba(229, 230, 237, 0.75);
         &:hover {
@@ -296,7 +267,7 @@ const Wrapper = styled.div`
         border-radius: 20px 0px 0px 20px;
       }
     }
-    .short {
+    .put {
       li:nth-child(1) {
         color: rgba(229, 230, 237, 0.75);
         &:hover {
@@ -329,57 +300,10 @@ const Wrapper = styled.div`
         line-height: 120%;
         color: #54678b;
       }
-      .leverage-size {
-        color: #e5e6ed;
-      }
-    }
-    .norm {
-      gap: 12px;
-      margin: 24px 0;
-      p {
-        padding: 0 16px;
-        height: 32px;
-        border-radius: 16px;
-        white-space: nowrap;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 32px;
-        color: rgba(255, 255, 255, 0.25);
-        user-select: none;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-      }
-      .active {
-        color: #e5e6ed;
-        background: #34384c;
-      }
-      .default {
-        color: #54678b;
-        transition: all 0.3s ease-in-out;
-        &:hover {
-          color: #e5e6ed;
-          background: #34384c;
-        }
-      }
     }
     .select {
-      border: none;
-      p {
-        margin-right: 8px;
-        padding: 0;
-        color: #54678b;
-      }
-      .inside {
-        padding: 0 16px;
-      }
-      /* &.visible, */
-      &.ticket,
-      &:hover {
-        background: #34384c;
-        p {
-          color: #e5e6ed;
-        }
-      }
+      height: 40px;
+      background: rgba(47, 50, 65, 0.5);
     }
     hr {
       margin: 24px 0 0 0;
@@ -389,24 +313,18 @@ const Wrapper = styled.div`
       background: #34384c;
     }
     .extra {
+      &.tab {
+        text-transform: capitalize;
+      }
       font-size: 14px;
       color: rgba(255, 255, 255, 0.85);
-      button {
-        margin-right: 6px;
-        padding: 0 12px;
-      }
     }
-    .marks {
-      margin-top: 4px;
-      /* width: calc(100% + 20px); */
-      /* transform: translateX(-10px); */
-      span {
-        width: 20px;
-        font-size: 12px;
-        line-height: 120%;
-        text-align: center;
-        color: #54678b;
-      }
+    .limit {
+      margin-top: 12px;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 120%;
+      color: #54678b;
     }
   }
   .contract-dominate > .detail {
@@ -461,12 +379,8 @@ const Wrapper = styled.div`
   }
 `;
 
-const StopSelect = styled.ul`
+const TimeSelect = styled.ul`
   margin: 4px 0;
-  li {
-    width: 148px;
-    white-space: nowrap;
-  }
 `;
 
 const InternalModal = styled.div`
@@ -496,18 +410,7 @@ const InternalModal = styled.div`
   }
 `;
 
-type direction = 'long' | 'short';
-
-interface NormParams {
-  [x: string]: { name: string; value: 0 | 1 | 2 | 3 };
-}
-
-const NORM_TYPE_MAPS: NormParams = {
-  limit: { name: 'Market', value: 0 as const },
-  market: { name: 'Limit', value: 1 as const },
-  stopLimit: { name: 'Stop Limit', value: 2 as const },
-  stopMarket: { name: 'Stop Market', value: 3 as const },
-};
+type direction = 'call' | 'put';
 
 export function Component() {
   const { exerciseDateList } = useOptionExerciseDate();
@@ -524,13 +427,11 @@ export function Component() {
     }
   }, [exerciseDateList]);
 
-  const [tabIndex, setTabIndex] = React.useState<TRADE_DIRECTION_ENUM.LONG | TRADE_DIRECTION_ENUM.SHORT>(
-    TRADE_DIRECTION_ENUM.LONG,
-  );
+  const [tabIndex, setTabIndex] = React.useState<'CALL' | 'PUT'>('CALL');
 
-  const [tableIndex, setTableIndex] = React.useState<'position' | 'orders' | 'history'>('position');
+  const [tableIndex, setTableIndex] = React.useState<'active' | 'history' | 'settlement'>('active');
 
-  const [purchaseParam, setPurchaseParam] = React.useState<null | TradePerpetualInformation>(null);
+  const [purchaseParam, setPurchaseParam] = React.useState(null);
   const [visible, { setTrue, setFalse }] = useBoolean(false);
 
   // position
@@ -538,6 +439,7 @@ export function Component() {
   const settledPosition = useRecoilValue(recoilSettledOptionPositions);
   const { totalPoolUSDCBalance, lockedUSDCBalance } = useRecoilValue(recoilPoolBalances);
 
+  const activePosition = React.useMemo(() => optionPosition?.filter((i) => !i?.canRedeem), [optionPosition]);
   const needSettlementPosition = React.useMemo(() => optionPosition?.filter((i) => i?.canRedeem), [optionPosition]);
 
   // OPTION
@@ -545,8 +447,8 @@ export function Component() {
   const [interval, setInterval] = React.useState<undefined | number>(undefined);
   const { run: optionPriceMapRun, data: priceMapData } = useOptionPriceMap();
 
-  const [leverage, handleLeverage] = useInputChange({
-    defaultValue: '1',
+  const [strikePrice, handleStrikePriceAmount] = useInputChange({
+    defaultValue: '0',
   });
   const [inputAmount, handleInputAmount] = useInputChange({});
 
@@ -557,8 +459,8 @@ export function Component() {
 
   const curOptionProduct = React.useMemo(() => {
     const dir = tabIndex.toLowerCase() as direction;
-    return priceMapData?.priceMap[dir][leverage];
-  }, [priceMapData?.priceMap, leverage, tabIndex]);
+    return priceMapData?.priceMap[dir][strikePrice];
+  }, [priceMapData?.priceMap, strikePrice, tabIndex]);
 
   const curOptionPrice = React.useMemo(
     () =>
@@ -568,14 +470,52 @@ export function Component() {
     [curOptionProduct?.value],
   );
 
-  // React.useEffect(() => {
-  //   optionPriceMapRun();
-  //   setInterval(10000);
-  // }, []);
+  // (totalPoolUSDCBalance - lockedUSDCBalance) / (1 - curOptionPrice)
+  const limit = React.useMemo(
+    () =>
+      curOptionPrice
+        ? BigNumber(BigNumber(totalPoolUSDCBalance).minus(lockedUSDCBalance))
+            .div(1e6)
+            .div(BigNumber(1).minus(curOptionPrice))
+            .toFixed(0, BigNumber.ROUND_DOWN)
+        : 0,
+    [curOptionPrice, lockedUSDCBalance, totalPoolUSDCBalance],
+  );
+
+  const maxReturn = React.useMemo(() => {
+    const temp = BigNumber(curOptionPrice);
+    return temp.isZero() || temp.isNaN() ? 0 : BigNumber(100).div(curOptionPrice).toFixed(2, BigNumber.ROUND_DOWN);
+  }, [curOptionPrice]);
+
+  const totalCost = React.useMemo(
+    () =>
+      BigNumber(curOptionPrice || 0)
+        .multipliedBy(inputAmount || 0)
+        .toString(),
+    [curOptionPrice, inputAmount],
+  );
+
+  React.useEffect(() => {
+    optionPriceMapRun();
+    setInterval(10000);
+  }, []);
 
   useInterval(() => {
     optionPriceMapRun();
   }, interval);
+
+  const handleConfirm = () => {
+    setPurchaseParam({
+      tabIndex,
+      strikePrice,
+      totalCost,
+      curOptionPrice,
+      endEpochId,
+      curOptionProductIndex: curOptionProduct?.index,
+      inputAmount,
+    });
+    setTrue();
+  };
 
   // prices
   const price = useRecoilValue(recoilKlinePrice);
@@ -591,124 +531,42 @@ export function Component() {
   const [tableTotal, setTableTotal] = React.useState<number>(20);
   const [tablePage, setTablePage] = React.useState<number>(0);
 
-  const [normIndex, setNormIndex] = React.useState<NormParams[string]>({ name: 'Market', value: 0 });
-  const [normInterim, setNormInterim] = React.useState<NormParams[string]>({
-    name: 'Stop Limit',
-    value: 2,
-  }); // 页面显示暂存 | 不做数据使用
-
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [modalType, setModalType] = React.useState<'success' | 'error'>('success');
 
-  // ********************
-  // 03.19 added 合约数据
-  // 切换tab初始化
-  React.useEffect(() => {
-    if (tabIndex) {
-      initInputAndSlider();
-    }
-  }, [tabIndex]);
-
-  const initInputAndSlider = () => {
-    handleInputPayAmount('');
-    handleLeverage('1');
-  };
-
-  const { WETH_IN_ACCOUNT, USDC_IN_ACCOUNT } = useRecoilValue(recoilBalances);
-  const wethReadable = React.useMemo(() => ethers.utils.formatUnits(WETH_IN_ACCOUNT, 18), [WETH_IN_ACCOUNT]);
-  const usdcReadable = React.useMemo(() => ethers.utils.formatUnits(USDC_IN_ACCOUNT, 6), [USDC_IN_ACCOUNT]);
-  // 输入pay
-  const [inputPayAmount, handleInputPayAmount, handleInputPayMax] = useInputChange({
-    defaultValue: '',
-    max: tabIndex === 'LONG' ? wethReadable : usdcReadable,
-  });
-
-  // 总价值 pay*leverage
-  const totalCost = React.useMemo(() => {
-    if (!inputPayAmount || !leverage) return '';
-    return BigNumber(leverage).multipliedBy(inputPayAmount).toString();
-  }, [inputPayAmount, leverage]);
-
-  const liqPrice = React.useMemo(
-    () =>
-      getLiqPrice({
-        S1: price?.indexPrice?.toString(),
-        n: inputPayAmount,
-        N: totalCost,
-        dir: tabIndex.toUpperCase(),
-      }),
-    [inputPayAmount, price?.indexPrice, tabIndex, totalCost],
-  );
-
-  const borrowFee = React.useMemo(() => '0.00', []);
-  const tradeFee = React.useMemo(() => '0.00', []);
-  const entryPrice = React.useMemo(() => price?.indexPrice?.toString(), [price?.indexPrice]);
-  const curDirBaseToken = React.useMemo(
-    () => (tabIndex === TRADE_DIRECTION_ENUM.LONG ? TRADE_TOKEN.ETH : TRADE_TOKEN.USDC),
-    [tabIndex],
-  );
-
-  const handleConfirm = () => {
-    setPurchaseParam({
-      direction: tabIndex,
-      inputAmount: inputPayAmount,
-      inputAmountValue: BigNumber(inputPayAmount)
-        .multipliedBy(tabIndex === TRADE_DIRECTION_ENUM.LONG ? entryPrice : 1)
-        .toString(),
-      leverage,
-      liqPrice,
-      borrowFee,
-      tradeFee,
-      entryPrice,
-      baseToken: curDirBaseToken,
-      totalCost,
-      totalCostValue: BigNumber(totalCost)
-        .multipliedBy(tabIndex === TRADE_DIRECTION_ENUM.LONG ? entryPrice : 1)
-        .toString(),
-    });
-
-    setTrue();
-  };
-
-  // 仓位
-  const positions: PositionsInterface = useRecoilValue(recoilPerpetualPositions);
-  const activePosition = React.useMemo(
-    () => Object.values(positions).filter((i: SinglePositionInterface) => BigNumber(i.size).gt(0)),
-    [positions],
-  );
-
   return (
     <React.Fragment>
-      <Wrapper>
+      <Wrapper choose={tabIndex}>
         <div className="contract-declare">
           <div className="info row-start">
             <TokenSelect />
             <Scrollbar className="scroll-bar" suppressScrollX={false} suppressScrollY>
               <div className="row-between scroll-container">
                 <div className="crux">
-                  <p>Price</p>
-                  <p>${price?.currentPrice?.toString().toBFixed(2)}</p>
-                </div>
-                <div className="crux">
                   <p>24h Change</p>
-                  <p className={filterColor(BigNumber(price.priceChangeRate).lt(0) ? 1 : 0)}>
-                    {price?.priceChangeRate?.toString().toBFixed(2)}%
-                  </p>
+                  <p className="unique">{price.priceChangeRate.toString().toBFixed(2)}%</p>
                 </div>
                 <div className="crux">
-                  <p>24h Volume</p>
-                  <p>-</p>
+                  <p>24h High</p>
+                  <p>{price.priceHigh.toString().toBFixed(2)}</p>
+                </div>
+                <div className="crux">
+                  <p>24h Low</p>
+                  <p>{price.priceLow.toString().toBFixed(2)}</p>
+                </div>
+                <div className="crux">
+                  <p>Avbl. Amount</p>
+                  <p className="row-start">
+                    <img src="https://placehold.jp/24x24.png" alt="coin" />
+                    <span>-</span>
+                  </p>
                 </div>
                 <div className="crux">
                   <p>Index Price</p>
                   <p className="row-start">
                     <img src="https://placehold.jp/24x24.png" alt="coin" />
-                    <span>{price?.indexPrice?.toString().toBFixed(2)}</span>
+                    <span>{price.indexPrice.toString().toBFixed(2)}</span>
                   </p>
-                </div>
-                <div className="crux">
-                  <p>Fee</p>
-                  <p>-</p>
                 </div>
               </div>
             </Scrollbar>
@@ -720,51 +578,42 @@ export function Component() {
             <Tabs
               className="tabs"
               underline={false}
+              suffix={
+                tableIndex === 'settlement' &&
+                needSettlementPosition?.length && (
+                  <SmartButton
+                    loading={redeemLoading}
+                    onClick={handleSettlement}
+                    disable={!needSettlementPosition?.length}
+                    className="settlement-button"
+                  >
+                    Confirm Settlement
+                  </SmartButton>
+                )
+              }
               items={[
-                { name: 'Position', key: 'position' },
-                { name: 'Orders', key: 'orders' },
-                { name: 'History', key: 'history' },
+                { name: 'Active', key: 'active' },
+                { name: 'History ', key: 'history' },
+                { name: 'Settlement ', key: 'settlement' },
               ]}
               onChange={(v) => setTableIndex(v)}
             />
-            {tableIndex === 'position' && (
+            {tableIndex === 'active' && (
               <React.Fragment>
                 <Table className="one" type={'end'} dataSource={activePosition}>
                   <TableHead>
-                    <p>Position</p>
-                    <p>Net Value</p>
-                    <p>Size</p>
-                    <p>Collateral</p>
-                    <p>Entry Price</p>
-                    <p>Mark Price</p>
-                    <p>Liq.Price</p>
-                    <p>Action</p>
+                    <p>Product</p>
+                    <p>Shares</p>
+                    <p>Strike Price</p>
+                    <p>Opening Price</p>
+                    <p>Current Price</p>
+                    <p>Expires In</p>
+                    <p>PNL</p>
+                    <p>PNL%</p>
                   </TableHead>
                   <TableBody>
-                    {activePosition.map((ele, index) => (
-                      <Fields key={index} ele={ele} indexPrice={entryPrice} />
-                    ))}
-                  </TableBody>
-                </Table>
-                <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} />
-              </React.Fragment>
-            )}
-            {tableIndex === 'orders' && (
-              <React.Fragment>
-                <Table className="two" type={'end'} dataSource={[]}>
-                  <TableHead>
-                    <p>Position</p>
-                    <p>Net Value</p>
-                    <p>Size</p>
-                    <p>Collateral</p>
-                    <p>Entry Price</p>
-                    <p>Mark Price</p>
-                    <p>Liq.Price</p>
-                    <p>Action</p>
-                  </TableHead>
-                  <TableBody>
-                    {settledPosition.map((ele, index) => (
-                      <Fields key={index} ele={ele} />
+                    {activePosition.map((ele) => (
+                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
                     ))}
                   </TableBody>
                 </Table>
@@ -773,20 +622,42 @@ export function Component() {
             )}
             {tableIndex === 'history' && (
               <React.Fragment>
-                <Table className="one" type={'end'} dataSource={needSettlementPosition}>
+                <Table className="two" type={'end'} dataSource={settledPosition}>
                   <TableHead>
-                    <p>Position</p>
-                    <p>Net Value</p>
-                    <p>Size</p>
-                    <p>Collateral</p>
-                    <p>Entry Price</p>
-                    <p>Mark Price</p>
-                    <p>Liq.Price</p>
-                    <p>Action</p>
+                    <p>Product</p>
+                    <p>Shares</p>
+                    <p>Strike Price</p>
+                    <p>Opening Price</p>
+                    <p>Current Price</p>
+                    <p>Expires In</p>
+                    <p>PNL</p>
+                    <p>PNL%</p>
                   </TableHead>
                   <TableBody>
-                    {needSettlementPosition.map((ele, index) => (
-                      <Fields key={index} ele={ele} />
+                    {settledPosition.map((ele) => (
+                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
+                    ))}
+                  </TableBody>
+                </Table>
+                <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} />
+              </React.Fragment>
+            )}
+            {tableIndex === 'settlement' && (
+              <React.Fragment>
+                <Table className="one" type={'end'} dataSource={needSettlementPosition}>
+                  <TableHead>
+                    <p>Product</p>
+                    <p>Shares</p>
+                    <p>Strike Price</p>
+                    <p>Opening Price</p>
+                    <p>Current Price</p>
+                    <p>Expires In</p>
+                    <p>PNL</p>
+                    <p>PNL%</p>
+                  </TableHead>
+                  <TableBody>
+                    {needSettlementPosition.map((ele) => (
+                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
                     ))}
                   </TableBody>
                 </Table>
@@ -798,120 +669,108 @@ export function Component() {
         <div className="contract-dominate">
           <div className="panel">
             <ul className={`tabs row-between ${tabIndex.toLowerCase()}`}>
-              <li onClick={() => setTabIndex(TRADE_DIRECTION_ENUM.LONG)}>LONG</li>
-              <li onClick={() => setTabIndex(TRADE_DIRECTION_ENUM.SHORT)}>SHORT</li>
+              <li onClick={() => setTabIndex('CALL')}>CALL</li>
+              <li onClick={() => setTabIndex('PUT')}>PUT</li>
               <div className="bar" />
             </ul>
-
-            <div className="norm row-start">
-              <p
-                className={normIndex.value === 0 ? 'active' : 'default'}
-                onClick={() => setNormIndex(NORM_TYPE_MAPS.limit)}
-              >
-                {NORM_TYPE_MAPS.limit.name}
-              </p>
-              <p
-                className={normIndex.value === 1 ? 'active' : 'default'}
-                onClick={() => setNormIndex(NORM_TYPE_MAPS.market)}
-              >
-                {NORM_TYPE_MAPS.market.name}
-              </p>
-              <Select
-                className={`select ${![0, 1].includes(normIndex.value) ? 'ticket' : ''}`}
-                placement="right"
-                overlay={<p>Stop</p>}
-                follow
-              >
-                <StopSelect>
-                  <li
-                    className={`${normIndex.value === 2 ? 'active' : ''}`.trimEnd()}
-                    onClick={() => {
-                      setNormIndex(NORM_TYPE_MAPS.stopLimit);
-                      setNormInterim(NORM_TYPE_MAPS.stopLimit);
-                    }}
-                  >
-                    {NORM_TYPE_MAPS.stopLimit.name}
-                  </li>
-                  <li
-                    className={`${normIndex.value === 3 ? 'active' : ''}`.trimEnd()}
-                    onClick={() => {
-                      setNormIndex(NORM_TYPE_MAPS.stopMarket);
-                      setNormInterim(NORM_TYPE_MAPS.stopMarket);
-                    }}
-                  >
-                    {NORM_TYPE_MAPS.stopMarket.name}
-                  </li>
-                </StopSelect>
-              </Select>
+            {/* Exercise Date */}
+            <div className="label row-between">
+              <h6>Exercise Date</h6>
             </div>
-            {/* <hr /> */}
-            <div className="label">
-              <h6>Pay</h6>
+            <Select
+              className="select"
+              size="lg"
+              placeholder="请选择时间"
+              overlay={activeExerciseDate ? <div>{activeExerciseDate?.label}</div> : undefined}
+            >
+              <TimeSelect>
+                {exerciseDateList?.map((ele) => (
+                  <li
+                    className={classNames({
+                      active: ele.value === activeExerciseDate?.value,
+                      disabled: ele.disabled,
+                    })}
+                    key={ele.value}
+                  >
+                    {ele.label}
+                  </li>
+                ))}
+              </TimeSelect>
+            </Select>
+            {/* Strike Prices */}
+            <div className="label row-between">
+              <h6>Strike Prices</h6>
+              <Input className="input" size="lg" value={strikePrice} />
+            </div>
+            <Slider
+              min={
+                priceMapData?.putMin && priceMapData?.callMin
+                  ? tabIndex === TRADE_DIRECTION_ENUM.PUT
+                    ? +priceMapData?.putMin
+                    : +priceMapData?.callMin
+                  : 0
+              }
+              max={
+                priceMapData?.putMax && priceMapData?.callMax
+                  ? tabIndex === TRADE_DIRECTION_ENUM.PUT
+                    ? +priceMapData?.putMax
+                    : +priceMapData?.callMax
+                  : 0
+              }
+              value={strikePrice}
+              tooltip={`${filterThousands(strikePrice, 2)}`}
+              onChange={handleStrikePriceAmount}
+            />
+            <hr />
+            {/* Option Price */}
+            <div className="label row-between">
+              <h6>Option Price</h6>
+              <p className="max">Max. Return: ~{maxReturn}%</p>
             </div>
             <Input
               className="input keep-style"
+              disabled
               size="lg"
-              suffix={
-                <p className="extra row-end">
-                  <Button onClick={handleInputPayMax}>Max</Button>
-                  <span>{curDirBaseToken}</span>
-                </p>
-              }
-              onChange={handleInputPayAmount}
-              value={inputPayAmount}
+              suffix={<span className="extra">USDC</span>}
+              value={curOptionPrice}
             />
+            {/* Enter Amount */}
             <div className="label">
-              <h6 className="capitalize">{tabIndex?.toLocaleLowerCase()}</h6>
+              <h6>Enter Amount</h6>
             </div>
             <Input
+              onChange={handleInputAmount}
               className="input"
               size="lg"
-              suffix={<span className="extra">{curDirBaseToken}</span>}
-              value={totalCost}
+              suffix={<span className="extra tab">{`${tabIndex.toLocaleLowerCase()}s`}</span>}
+              value={inputAmount}
             />
-            <div className="label row-between">
-              <h6>Leverage Slider</h6>
-              <Input className="input" size="lg" value={leverage} suffix={<span className="leverage-size">x</span>} />
-            </div>
-            <Slider min={1} max={50} marks={10} value={leverage} tooltip={`${leverage}x`} onChange={handleLeverage} />
-            <p className="marks row-between">
-              {[...Array(10).keys()].map((ele) => (
-                <span key={ele}>{ele * 5 + 5}x</span>
-              ))}
-            </p>
+            <p className="limit">Limit: {limit}</p>
           </div>
           <div className="detail">
             <h4>Trade Information</h4>
             <p className="info row-between">
-              <span>Entry Price</span>
-              <span>${BigNumber(entryPrice).toFixed(2, BigNumber.ROUND_DOWN)}</span>
+              <span>Max Return</span>
+              <span>~{maxReturn}%</span>
             </p>
             <p className="info row-between">
-              <span>Liq.Price</span>
-              <span>${BigNumber(liqPrice).toFixed(2, BigNumber.ROUND_DOWN)}</span>
+              <span>Time to Settlement</span>
+              <span>
+                {minutes}m {seconds}s
+              </span>
             </p>
             <p className="info row-between">
-              <span>Leverage</span>
-              <span>{leverage}x</span>
+              <span>Total Cost</span>
+              <span>{totalCost} USDC</span>
             </p>
-            <p className="info row-between">
-              <span>Borrow Fee</span>
-              <span>${borrowFee}</span>
-            </p>
-            <p className="info row-between">
-              <span>Trade Fee</span>
-              <span>${tradeFee}</span>
-            </p>
-            <SmartButton onClick={handleConfirm} disabled={!inputPayAmount || !totalCost} size="lg">
+            <SmartButton onClick={handleConfirm} disabled={!inputAmount || !totalCost} size="lg">
               Confirm
             </SmartButton>
           </div>
           <p className="jump">User Guidance</p>
         </div>
       </Wrapper>
-      <Confirm visible={visible} onClose={setFalse} params={purchaseParam} />
-
-      {/* 状态modal */}
+      <ConfirmModal visible={visible} onClose={setFalse} params={purchaseParam} />
       <Modal
         visible={modalVisible}
         // loading={loading}
@@ -945,4 +804,4 @@ export function Component() {
   );
 }
 
-Component.displayName = 'Perpetual';
+Component.displayName = 'Option';

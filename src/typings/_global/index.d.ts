@@ -28,6 +28,11 @@ export interface SinglePositionInterface {
   totalPositionValue: string;
   direction: string;
 }
+// export interface PositionsInterface {
+//   [TRADE_DIRECTION_ENUM.LONG]: SinglePositionInterface[];
+//   [TRADE_DIRECTION_ENUM.SHORT]: SinglePositionInterface[];
+// }
+
 export interface PositionsInterface {
   [TRADE_DIRECTION_ENUM.LONG]: SinglePositionInterface;
   [TRADE_DIRECTION_ENUM.SHORT]: SinglePositionInterface;

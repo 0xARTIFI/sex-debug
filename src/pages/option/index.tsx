@@ -1,7 +1,8 @@
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable @typescript-eslint/indent */
 /* eslint-disable no-nested-ternary */
-import { Input, Scrollbar, Select, Slider, Table, Tabs } from '@/components';
+import { IconModalError, IconModalSuccess } from '@/assets/icons/IconGroup';
+import { Input, Modal, Pagination, Scrollbar, Select, Slider, Table, Tabs } from '@/components';
 import { SmartButton } from '@/components/_global';
 import TokenSelect from '@/components/_global/TokenSelect';
 import TVChart from '@/components/_global/TradingView';
@@ -24,8 +25,8 @@ import classNames from 'classnames';
 import * as React from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import ConfirmModal from './components/ConfirmModal';
-import Positions from './components/Positions';
+import Confirm from './components/Confirm';
+import Fields from './components/Fields';
 
 const { TableHead, TableBody } = Table;
 
@@ -95,9 +96,6 @@ const Wrapper = styled.div<{ choose: 'CALL' | 'PUT' }>`
         height: 24px;
         border-radius: 50%;
       }
-      .unique {
-        color: #13b0a7 !important;
-      }
     }
   }
   .contract-declare > .chart {
@@ -135,9 +133,6 @@ const Wrapper = styled.div<{ choose: 'CALL' | 'PUT' }>`
         background: #34384c;
         border-radius: 16px;
       }
-    }
-    .unique {
-      color: #13b0a7 !important;
     }
     .table {
       .thead {
@@ -282,7 +277,7 @@ const Wrapper = styled.div<{ choose: 'CALL' | 'PUT' }>`
     .label {
       margin: 24px 0 12px 0;
       h6 {
-        font-weight: 700;
+        font-weight: 600;
         font-size: 16px;
         line-height: 120%;
         color: #54678b;
@@ -382,10 +377,47 @@ const TimeSelect = styled.ul`
   margin: 4px 0;
 `;
 
+const InternalModal = styled.div`
+  padding: 24px;
+  width: 360px;
+  svg {
+    display: block;
+    margin: 0 auto;
+    width: 96px;
+    height: 128px;
+  }
+  p {
+    font-size: 16px;
+    line-height: 140%;
+    color: #9cadcd;
+    span {
+      color: #316ed8;
+    }
+    .reset {
+      user-select: none;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      &:hover {
+        color: #0e4bc3;
+      }
+    }
+  }
+`;
+
 type direction = 'call' | 'put';
 
 export function Component() {
   const { exerciseDateList } = useOptionExerciseDate();
+
+  const filterColor = React.useCallback((params: 0 | 1 | 2) => {
+    if (params === 0) {
+      return 'up';
+    }
+    if (params === 1) {
+      return 'down';
+    }
+    return 'initial';
+  }, []);
 
   const [activeExerciseDate, setActiveExerciseDate] = React.useState<{
     label: string;
@@ -500,8 +532,14 @@ export function Component() {
     redeem(epochIds, productIds);
   };
 
+  const [tableTotal, setTableTotal] = React.useState<number>(20);
+  const [tablePage, setTablePage] = React.useState<number>(0);
+
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
+  const [modalType, setModalType] = React.useState<'success' | 'error'>('success');
+
   return (
-    <>
+    <React.Fragment>
       <Wrapper choose={tabIndex}>
         <div className="contract-declare">
           <div className="info row-start">
@@ -510,15 +548,17 @@ export function Component() {
               <div className="row-between scroll-container">
                 <div className="crux">
                   <p>24h Change</p>
-                  <p className="unique">{price.priceChangeRate.toString().toBFixed(2)}%</p>
+                  <p className={filterColor(BigNumber(price.priceChangeRate).lt(0) ? 1 : 0)}>
+                    {price?.priceChangeRate?.toString().toBFixed(2)}%
+                  </p>
                 </div>
                 <div className="crux">
                   <p>24h High</p>
-                  <p>{price.priceHigh.toString().toBFixed(2)}</p>
+                  <p>{price?.priceHigh?.toString().toBFixed(2)}</p>
                 </div>
                 <div className="crux">
                   <p>24h Low</p>
-                  <p>{price.priceLow.toString().toBFixed(2)}</p>
+                  <p>{price?.priceLow?.toString().toBFixed(2)}</p>
                 </div>
                 <div className="crux">
                   <p>Avbl. Amount</p>
@@ -531,7 +571,7 @@ export function Component() {
                   <p>Index Price</p>
                   <p className="row-start">
                     <img src="https://placehold.jp/24x24.png" alt="coin" />
-                    <span>{price.indexPrice.toString().toBFixed(2)}</span>
+                    <span>{price?.indexPrice?.toString().toBFixed(2)}</span>
                   </p>
                 </div>
               </div>
@@ -559,8 +599,8 @@ export function Component() {
               }
               items={[
                 { name: 'Active', key: 'active' },
-                { name: 'Settlement ', key: 'settlement' },
-                { name: 'History ', key: 'history' },
+                { name: 'History', key: 'history' },
+                { name: 'Settlement', key: 'settlement' },
               ]}
               onChange={(v) => setTableIndex(v)}
             />
@@ -579,11 +619,11 @@ export function Component() {
                   </TableHead>
                   <TableBody>
                     {activePosition.map((ele) => (
-                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
+                      <Fields priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
                     ))}
                   </TableBody>
                 </Table>
-                {/* <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} /> */}
+                <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} />
               </React.Fragment>
             )}
             {tableIndex === 'history' && (
@@ -601,11 +641,11 @@ export function Component() {
                   </TableHead>
                   <TableBody>
                     {settledPosition.map((ele) => (
-                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
+                      <Fields priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
                     ))}
                   </TableBody>
                 </Table>
-                {/* <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} /> */}
+                <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} />
               </React.Fragment>
             )}
             {tableIndex === 'settlement' && (
@@ -623,11 +663,11 @@ export function Component() {
                   </TableHead>
                   <TableBody>
                     {needSettlementPosition.map((ele) => (
-                      <Positions priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
+                      <Fields priceMapData={priceMapData} key={ele.epochId + ele.productId} ele={ele} />
                     ))}
                   </TableBody>
                 </Table>
-                {/* <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} /> */}
+                <Pagination current={tablePage} total={tableTotal} onChange={(v) => setTablePage(v)} />
               </React.Fragment>
             )}
           </div>
@@ -736,8 +776,37 @@ export function Component() {
           <p className="jump">User Guidance</p>
         </div>
       </Wrapper>
-      <ConfirmModal visible={visible} onClose={setFalse} params={purchaseParam} />
-    </>
+      <Confirm visible={visible} onClose={setFalse} params={purchaseParam} />
+      <Modal
+        visible={modalVisible}
+        // loading={loading}
+        closable={false}
+        ok="Back"
+        onOk={() => {
+          setModalVisible(false);
+        }}
+      >
+        <InternalModal>
+          {modalType === 'success' && (
+            <React.Fragment>
+              <IconModalSuccess />
+              <p>
+                You have purchased <span>0000.00</span> shares of Simple Option at the price of <span>$0.00</span>. Go
+                back to position for more detail.
+              </p>
+            </React.Fragment>
+          )}
+          {modalType === 'success' && (
+            <React.Fragment>
+              <IconModalError />
+              <p>
+                Transaction failed. xxxxxxxxxxxx xxxxxx xxxxxx. <span className="reset">Try again</span>.
+              </p>
+            </React.Fragment>
+          )}
+        </InternalModal>
+      </Modal>
+    </React.Fragment>
   );
 }
 

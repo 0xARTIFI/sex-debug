@@ -21,11 +21,11 @@ export type { InputProps } from './Input';
 
 export { default as message } from './Message';
 
-// export { default as Modal } from './Modal';
-// export type { ModalProps } from './Modal';
+export { default as Modal } from './Modal';
+export type { ModalProps } from './Modal';
 
-// export { default as Pagination } from './Pagination';
-// export type { PaginationProps } from './Pagination';
+export { default as Pagination } from './Pagination';
+export type { PaginationProps } from './Pagination';
 
 // export { default as Radio } from './Radio';
 // export type { RadioProps } from './Radio';
