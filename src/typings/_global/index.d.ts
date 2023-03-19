@@ -69,3 +69,11 @@ export interface Position {
   totalPositionValue: string;
   direction: string;
 }
+
+export interface Token {
+  image: string;
+  decimal?: string | number;
+  value: string;
+  label: string;
+  disabled: boolean;
+}

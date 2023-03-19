@@ -22,14 +22,9 @@ export const GlobalStyle = styled.createGlobalStyle`
   * {
     box-sizing: border-box;
   }
-  :root {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  /* 隐藏横向滚动条 */
-  :root::-webkit-scrollbar {
-    height: 0;
-    background-color: transparent;
+  ::selection {
+    background: rgba(47, 50, 65, 0.5);
+    color: #316ed8;
   }
   body {
     -webkit-font-smoothing: antialiased;
@@ -37,6 +32,32 @@ export const GlobalStyle = styled.createGlobalStyle`
     -webkit-text-size-adjust: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+  }
+  body {
+    background: rgba(20, 21, 24, 1);
+  }
+  /* -----------------  涨跌状态  ----------------- */
+  .up {
+    color: #13b0a7 !important;
+    fill: #13b0a7 !important;
+  }
+  .initial {
+    color: #e5e6ed !important;
+    transition: all 0.3s ease-in-out;
+  }
+  .down {
+    color: #d9224f !important;
+    fill: #d9224f !important;
+  }
+  /* -----------------  涨跌状态  ----------------- */
+  /* 弹出层容器 */
+  #stack-dom {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 0;
+    z-index: 999999;
   }
   /* flex */
   .row-start {
@@ -89,5 +110,11 @@ export const GlobalStyle = styled.createGlobalStyle`
   }
   .full-width {
     width: 100%;
+  }
+  .gap-16 {
+    gap: 16px;
+  }
+  .gap-24 {
+    gap: 24px;
   }
 `;

@@ -1,8 +1,10 @@
 /* eslint-disable @iceworks/best-practices/recommend-polyfill */
+import { message } from '@/components';
 import { exchangeContract, TRADE_DIRECTION_ENUM } from '@/configs/common';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import BigNumber from 'bignumber.js';
+import { useEffect } from 'react';
 import useFetchPerpetualPositions from './useFetchPerpetualPositions';
 
 // traderCloseLongOrder
@@ -49,13 +51,25 @@ const useClosePositon = () => {
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      throw Error(e);
+      throw Error(e?.message);
     }
   };
 
-  const { run, loading } = useRequest(closePosition, {
+  const { run, data, loading, error } = useRequest(closePosition, {
     manual: true,
   });
+
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
 
   return { run, loading };
 };

@@ -1,39 +1,29 @@
-import { Scrollbar } from '@/components';
-import { Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import Header from './Header';
+import Interval from './Interval';
 
 const Wrapper = styled.div`
-  background: rgba(20, 21, 24, 1);
-  > .header {
-    height: 72px;
-    background: rgba(243, 134, 134, 0.6);
-  }
-  > .main {
-    height: calc(100vh - 72px);
-  }
-  > .footer {
+  min-width: 1280px;
+  .footer {
     height: 50px;
+    border-top: 0.5px solid #34384c;
+    border-bottom: 0.5px transparent;
+    text-align: center;
+    font-size: 14px;
+    line-height: 50px;
+    color: #54678b;
   }
 `;
 
 function BasicLayout({ children }: any) {
   return (
     <Wrapper>
-      <header className="header">
-        <nav className="row-start">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/debug">Debug</Link>
-          <Link to="/option">Option</Link>
-        </nav>
-      </header>
-      <main className="main">
-        <Scrollbar>
-          {children}
-
-          {/* <Outlet /> */}
-          <footer className="footer">SubstanceX © 2023</footer>
-        </Scrollbar>
+      <Interval />
+      <Header />
+      <main>
+        <Outlet />
+        <footer className="footer">SubstanceX © {new Date().getFullYear()}</footer>
       </main>
     </Wrapper>
   );

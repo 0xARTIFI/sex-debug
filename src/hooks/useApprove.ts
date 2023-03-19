@@ -22,11 +22,10 @@ const useApprove = () => {
 
     // 若存在needAllowance 则检查needAllowance
     if (needAllowance) {
-      // 如果allowance > needAllowance 则无需approve
-      if (ethers.BigNumber.from(allowance).gt(needAllowance)) {
+      // 如果allowance >= needAllowance 则无需approve
+      if (ethers.BigNumber.from(allowance).gte(needAllowance)) {
         return true;
       }
-      console.log('allowance', ethers.BigNumber.from(allowance).gt(needAllowance));
     } else if (ethers.BigNumber.from(allowance).gt(0)) {
       // 若不存在needAllowance 则检查如果allowance是否存在即可
       return true;
@@ -38,7 +37,7 @@ const useApprove = () => {
         functionName: 'approve',
         args: [spender, ethers.BigNumber.from(MAX_ALLOWANCE)],
       });
-      console.log('config', config);
+      console.log('APPROVE config', config);
       const tx = await writeContract(config);
       const res = await tx.wait();
       return res;

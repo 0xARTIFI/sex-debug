@@ -1,5 +1,11 @@
-import { BalancesEnum, TRADE_DIRECTION_ENUM } from '@/configs/common';
-import type { BalancesInterface, OptionPositionItem, PositionsInterface } from '@/typings/_global';
+import { AllowancesEnum, BalancesEnum, TRADE_DIRECTION_ENUM } from '@/configs/common';
+import type {
+  AllowancesInterface,
+  BalancesInterface,
+  OptionPositionItem,
+  PositionsInterface,
+  Token,
+} from '@/typings/_global';
 import { atom } from 'recoil';
 
 export const recoilOptionEpochIds = atom<{
@@ -36,11 +42,21 @@ export const recoilBalances = atom<BalancesInterface & { loading: boolean }>({
   },
 });
 
+export const recoilAllowance = atom<AllowancesInterface & { loading: boolean }>({
+  key: 'allowance',
+  default: {
+    [AllowancesEnum.USDC_IN_WALLET_ALLOWANCE]: '0',
+    [AllowancesEnum.WETH_IN_WALLET_ALLOWANCE]: '0',
+    loading: false,
+  },
+});
+
 export const recoilPoolBalances = atom<{
   totalPoolUSDCBalance: string;
   totalPoolWETHBalance: string;
   userPoolBalance: string;
   totalPoolBalance: string;
+  lockedUSDCBalance: string;
   loading: boolean;
 }>({
   key: 'lpBalances',
@@ -49,6 +65,7 @@ export const recoilPoolBalances = atom<{
     totalPoolBalance: '0',
     totalPoolUSDCBalance: '0',
     totalPoolWETHBalance: '0',
+    lockedUSDCBalance: '0',
     loading: false,
   },
 });
@@ -122,4 +139,25 @@ export const recoilUnsettledOptionPositions = atom<OptionPositionItem[]>({
 export const recoilSettledOptionPositions = atom<OptionPositionItem[]>({
   key: 'settledOptionPositions',
   default: [],
+});
+
+export const recoilCurrentToken = atom<Token>({
+  key: 'currentToken',
+  default: {
+    image: require('@/assets/images/tokens/eth.svg'),
+    decimal: 18,
+    value: 'WETH',
+    label: 'ETH',
+    disabled: false,
+  },
+});
+
+export const recoilKlinePrice = atom<any>({
+  key: 'klinePrice',
+  default: {
+    priceChangeRate: 0,
+    priceHigh: 0,
+    priceLow: 0,
+    indexPrice: 0,
+  },
 });

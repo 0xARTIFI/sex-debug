@@ -1,43 +1,44 @@
+import { IconSelectArrow } from '@/assets/icons/IconGroup';
+import { Scrollbar } from '@/components';
+import { fadeConfig } from '@/configs/motion';
+import { useClickAway } from 'ahooks';
+import classNames from 'classnames';
+import { AnimatePresence, motion } from 'framer-motion';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import classNames from 'classnames';
-import { fadeConfig } from '@/configs/motion';
-import { AnimatePresence, motion } from 'framer-motion';
-import { cloneElement } from '../_util/reactNode';
-import { Scrollbar } from '@/components';
-import { useClickAway } from 'ahooks';
 import styled from 'styled-components';
+import { cloneElement } from '../_util/reactNode';
 
 const Wrapper = styled.div`
   /* global */
-  border: 1px solid ${(props) => props.theme.lineColorPrimary};
+  border: 1px solid #34384c;
   transition: all 0.3s ease-in-out;
   &.follow {
     position: relative;
   }
   > .inside {
+    cursor: pointer;
     .placeholder {
-      color: ${(props) => props.theme.textColorFourth};
+      color: rgba(255, 255, 255, 0.25);
       transition: all 0.3s ease-in-out;
     }
     .selection {
-      color: ${(props) => props.theme.textColorPrimary};
+      color: #e5e6ed;
     }
     .arrow {
-      fill: ${(props) => props.theme.textColorPrimary};
+      fill: #e5e6ed;
       transition: all 0.3s ease-in-out;
     }
   }
+  &:not(.danger, .disabled):hover {
+    border: 1px solid #34384c;
+  }
   &:not(.danger, .disabled).visible {
-    border: 1px solid #00ba3d;
+    border: 1px solid #0e4bc3;
     .arrow {
-      fill: #00ba3d;
+      fill: #e5e6ed;
       transform: rotateZ(-180deg);
     }
-  }
-  &:not(.danger, .disabled):hover {
-    border: 1px solid #00ba3d;
-    cursor: pointer;
   }
   /* base */
   &.danger {
@@ -48,46 +49,45 @@ const Wrapper = styled.div`
     }
   }
   &.disabled {
-    background: ${(props) => props.theme.disabledColorPrimary};
+    background: rgba(255, 255, 255, 0.08);
     user-select: none;
     cursor: not-allowed;
     transition: all 0.3s ease-in-out;
     .selection {
-      color: ${(props) => props.theme.textColorFifth};
+      color: rgba(255, 255, 255, 0.25);
     }
     .arrow {
-      fill: ${(props) => props.theme.textColorFifth};
+      fill: rgba(255, 255, 255, 0.25);
       transition: all 0.3s ease-in-out;
     }
   }
   &.sm {
-    border-radius: 4px;
+    border-radius: 12px;
     .inside {
       padding: 0 8px;
-      min-width: 80px;
-      height: 30px;
+      height: 24px;
       .placeholder,
       .selection {
-        font-size: 12px;
+        font-size: 14px;
       }
     }
   }
   &.md {
-    border-radius: 5px;
+    border-radius: 16px;
     .inside {
-      padding: 0 10px;
-      height: 38px;
+      padding: 0 16px;
+      height: 32px;
       .placeholder,
       .selection {
-        font-size: 12px;
+        font-size: 14px;
       }
     }
   }
   &.lg {
-    border-radius: 6px;
+    border-radius: 20px;
     .inside {
-      padding: 0 12px;
-      height: 42px;
+      padding: 0 20px;
+      height: 40px;
       .placeholder,
       .selection {
         font-size: 16px;
@@ -99,67 +99,77 @@ const Wrapper = styled.div`
 const Trigger = styled(motion.div)`
   /* global */
   position: absolute;
-  background: ${(props) => props.theme.backgroundColorThird};
-  box-shadow: ${(props) => props.theme.boxShadowColorPrimary};
-  border: 1px solid ${(props) => props.theme.lineColorPrimary};
+  padding: 4px;
+  background: #242731;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0px 9px 28px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   z-index: 1;
-  transition: background-color box-shadow border 0.3s ease-in-out;
+  transition: background-color box-shadow 0.3s ease-in-out;
   .ms-container {
     width: 100%; // 注意边框侵占容器宽度导致样式错误
-    max-height: 20vh;
+    max-height: 60vh;
   }
   li {
+    color: #e5e6ed;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    &:hover {
-      background: ${(props) => props.theme.backgroundColorFourth};
+    &:not(.active, .disabled):hover {
+      background: rgba(255, 255, 255, 0.12);
     }
+    /* base */
+    &.active {
+      position: relative;
+      background: #54678b;
+      font-weight: 600;
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 16px;
+        width: 20px;
+        height: 20px;
+        background: url(${require('@/assets/images/_global/IconCheck.svg')}) no-repeat;
+        transform: translateY(-50%);
+      }
+    }
+    &.disabled {
+      filter: brightness(50%);
+      cursor: not-allowed;
+    }
+  }
+  li + li {
+    margin-top: 4px;
   }
   /* base */
-  .outer {
-    position: sticky;
-    top: 0;
-    padding: 12px 0;
-    background: ${(props) => props.theme.backgroundColorThird};
-  }
-  .search {
-    margin: 0 12px;
-    label {
-      border: 1px solid ${(props) => props.theme.lineColorSecond};
-      background: ${(props) => props.theme.backgroundColorFourth};
-    }
-    .icon-search {
-      margin-right: 6px;
-      color: ${(props) => props.theme.textColorPrimary};
-      transition: all 0.3s ease-in-out;
-    }
-  }
   &.sm {
-    border-radius: 4px;
+    border-radius: 12px;
     li {
       padding: 0 8px;
-      height: 30px;
-      line-height: 30px;
-      font-size: 12px;
+      height: 24px;
+      line-height: 24px;
+      font-size: 14px;
+      border-radius: 12px;
     }
   }
   &.md {
-    border-radius: 5px;
+    border-radius: 16px;
     li {
-      padding: 0 10px;
-      height: 38px;
-      line-height: 38px;
-      font-size: 12px;
+      padding: 0 16px;
+      height: 32px;
+      line-height: 32px;
+      font-size: 14px;
+      border-radius: 16px;
     }
   }
   &.lg {
-    border-radius: 6px;
+    border-radius: 20px;
     li {
-      padding: 0 12px;
-      height: 42px;
-      line-height: 42px;
+      padding: 0 20px;
+      height: 40px;
+      line-height: 40px;
       font-size: 16px;
+      border-radius: 20px;
     }
   }
 `;
@@ -178,6 +188,7 @@ export interface SelectProps {
   placement?: DropdownPlacement;
   children?: React.ReactNode;
   follow?: boolean;
+  arrow?: boolean;
   size?: SizeType;
   danger?: boolean;
   disabled?: boolean;
@@ -185,6 +196,7 @@ export interface SelectProps {
   triggerWidth?: number;
   triggerHeight?: number;
   overlay?: React.ReactNode;
+  onChange?: (...args: any[]) => any;
 }
 
 interface TriggerProps extends SelectProps {
@@ -200,17 +212,6 @@ interface PositionProps {
   width: number | 'auto';
   height?: number;
 }
-
-const IconArrow: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
-  return (
-    <svg width="8" height="5" viewBox="0 0 8 5" {...props}>
-      <path
-        // eslint-disable-next-line
-        d="M0.707105 1.70711C0.0771402 1.07714 0.523309 0 1.41421 0H6.58579C7.47669 0 7.92286 1.07714 7.29289 1.70711L4.70711 4.29289C4.31658 4.68342 3.68342 4.68342 3.29289 4.29289L0.707105 1.70711Z"
-      />
-    </svg>
-  );
-};
 
 const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
   const { followRef, placement = 'left', size = 'md', follow, triggerWidth, triggerHeight, children, onClose } = props;
@@ -264,7 +265,17 @@ const Portal: React.FC<TriggerProps> = (props: TriggerProps) => {
 };
 
 const Select: React.FC<SelectProps> = (props: SelectProps) => {
-  const { className, follow = false, size = 'md', danger = false, disabled = false, placeholder, overlay } = props;
+  const {
+    className,
+    follow = false,
+    arrow = true,
+    size = 'md',
+    danger = false,
+    disabled = false,
+    placeholder,
+    overlay,
+    onChange,
+  } = props;
 
   const followRef = React.useRef<HTMLDivElement>(null);
   const [visible, setVisible] = React.useState<boolean>(false);
@@ -281,6 +292,7 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
   const handleOpen: React.MouseEventHandler<HTMLDivElement> = () => {
     if (disabled) return;
     setVisible(true);
+    onChange?.();
   };
 
   const handleClose: React.MouseEventHandler<HTMLDivElement> = () => {
@@ -301,7 +313,7 @@ const Select: React.FC<SelectProps> = (props: SelectProps) => {
       <Wrapper className={classes} ref={followRef} onClick={handleOpen}>
         <div className="inside row-between">
           {memoElement}
-          <IconArrow className="arrow" />
+          {arrow && <IconSelectArrow className="arrow" />}
         </div>
       </Wrapper>
       <AnimatePresence>{visible && <Portal {...props} followRef={followRef} onClose={handleClose} />}</AnimatePresence>

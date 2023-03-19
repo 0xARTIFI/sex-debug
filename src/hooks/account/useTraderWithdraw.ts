@@ -1,8 +1,10 @@
+import { message } from '@/components';
 import { exchangeContract, TRADE_TOKEN } from '@/configs/common';
 import { USDCAmount, WETHAmount } from '@/typings/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
+import { useEffect } from 'react';
 import useBalances from '../useBalances';
 
 const useTraderWithdraw = () => {
@@ -24,13 +26,26 @@ const useTraderWithdraw = () => {
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      return e?.message;
+      throw new Error(e?.message);
     }
   };
 
   const { run, loading, data, error } = useRequest(handleWithdraw, {
     manual: true,
   });
+
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
+
   return { run, loading, data, error };
 };
 

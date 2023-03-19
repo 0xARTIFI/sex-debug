@@ -22,7 +22,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "public/charting_library"],
   "exclude": ["node_modules", "dist", "public"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

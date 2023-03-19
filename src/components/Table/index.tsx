@@ -1,12 +1,11 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import IconSpin from '@/assets/images/_global/IconSpin';
+import { IconGlobalSpin } from '@/assets/icons/IconGroup';
 import { fadeConfig } from '../../configs/motion';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cloneElement } from '../_util/reactNode';
 import { ResetFactor } from '../_type/type';
 import { Scrollbar } from '../index';
-import { t } from '@lingui/macro';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -17,8 +16,7 @@ const Wrapper = styled.div`
       span {
         margin-left: 8px;
         font-size: 14px;
-        color: ${(props) => props.theme.textColorPrimary};
-        transition: all 0.3s ease-in-out;
+        color: #54678b;
       }
     }
     .normal {
@@ -27,8 +25,8 @@ const Wrapper = styled.div`
       right: 0;
       bottom: 0;
       left: 0;
-      background: ${(props) => props.theme.backgroundColorFourth};
-      backdrop-filter: blur(2px);
+      background: rgba(14, 75, 195, 0.04);
+      backdrop-filter: blur(4px);
       cursor: not-allowed;
       transition: all 0.3s ease-in-out;
       z-index: 10;
@@ -40,18 +38,16 @@ const Wrapper = styled.div`
       bottom: 0;
       left: 0;
       img {
-        margin: 0 auto 22px auto;
-        width: 128px;
-        height: 128px;
-        filter: ${(props) => props.theme.filterBrightness};
-        transition: all 0.3s ease-in-out;
+        margin: 0 auto 4px auto;
+        width: 48px;
+        height: 48px;
       }
       h6 {
         width: 100%;
         text-align: center;
-        font-size: 14px;
-        line-height: 18px;
-        color: ${(props) => props.theme.textColorFourth};
+        font-size: 12px;
+        line-height: 120%;
+        color: #54678b;
         transition: all 0.3s ease-in-out;
       }
     }
@@ -60,6 +56,7 @@ const Wrapper = styled.div`
 
 interface TheadProps {
   fixed?: boolean;
+  children?: React.ReactNode;
 }
 
 interface TbodyProps {
@@ -67,6 +64,7 @@ interface TbodyProps {
   empty?: React.ReactNode;
   dataSource?: object[];
   scroll?: number;
+  children?: React.ReactNode;
   onMore?: (...args: any[]) => any;
 }
 
@@ -74,7 +72,6 @@ type TableInstance = TheadProps & ResetFactor<TbodyProps, 'type' | 'dataSource'>
 
 export interface TableProps extends TableInstance {
   className?: string;
-  children?: React.ReactNode;
 }
 
 const TableHead: React.FC<TheadProps> = ({ children, fixed }) => {
@@ -100,8 +97,8 @@ const TableBody: React.FC<TbodyProps> = (props) => {
       <AnimatePresence>
         {type === 'start' && (
           <motion.div className={`${scroll ? 'scroll' : 'normal'} row-center`.trimEnd()} {...fadeConfig}>
-            <IconSpin size={scroll ? 16 : 38} color="#00BA3D" />
-            {scroll && <span>{t`loading`}…</span>}
+            <IconGlobalSpin size={scroll ? 16 : 38} color="#0e4bc3" />
+            {scroll && <span>loading…</span>}
           </motion.div>
         )}
       </AnimatePresence>
@@ -113,8 +110,8 @@ const TableBody: React.FC<TbodyProps> = (props) => {
       <AnimatePresence>
         {type === 'end' && dataSource.length === 0 && (
           <motion.div className="empty col-center" {...fadeConfig}>
-            <img src={require('@/assets/images/users/interface/nodata.png')} alt="icon" />
-            {empty || <h6>{t`noData`}</h6>}
+            <img src={require('@/assets/images/_global/nodata.svg')} alt="icon" />
+            {empty || <h6>No Data</h6>}
           </motion.div>
         )}
       </AnimatePresence>

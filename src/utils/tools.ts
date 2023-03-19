@@ -1,8 +1,10 @@
+/* eslint-disable no-multi-assign */
 /* eslint-disable no-extend-native */
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import UTC from 'dayjs/plugin/utc';
 import { uniq, uniqBy } from 'lodash-es';
+import { Address } from 'wagmi';
 
 dayjs.extend(UTC);
 
@@ -33,7 +35,7 @@ export const filterThousands = (value: string | number, decimal = 4) => {
 };
 
 // 隐藏文本信息
-export const filterHideText = (value: string, before = 4, after = 4, fuzz = '****') => {
+export const filterHideText = (value: string | Address, before = 4, after = 4, fuzz = '....') => {
   if (!value || value.length <= before + after) return value;
   return `${value.slice(0, before)}${fuzz}${value.slice(-after)}`;
 };
@@ -109,20 +111,7 @@ export const download = (fileName: string, content: Blob) => {
 
 String.prototype.toBFixed = function (_decimal = 2) {
   const temp = BigNumber(this.toString());
-  if (temp.isNaN()) return this;
 
-  // 2.0034
-  const str = temp.toString();
-  const fraction = str.includes('.') ? str.split('.')[1] : '';
-  // 整数
-  if (!fraction) return str;
-  const decimal = fraction.split('').findIndex((i) => i !== '0') + _decimal;
-
-  return temp.toFixed(decimal, BigNumber.ROUND_DOWN);
-};
-
-String.prototype.toBFixed = function (_decimal = 2) {
-  const temp = BigNumber(this.toString());
   if (temp.isNaN()) return this;
 
   // 2.0034

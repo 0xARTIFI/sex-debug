@@ -1,12 +1,13 @@
-import * as React from 'react';
-import { createPortal } from 'react-dom';
-import classNames from 'classnames';
 import { maskConfig, modalConfig } from '@/configs/motion';
+import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
+import * as React from 'react';
+import { IconModalClose } from '@/assets/icons/IconGroup';
+import { createPortal } from 'react-dom';
 import { RemoveScroll } from 'react-remove-scroll';
-import { cloneElement } from '../_util/reactNode';
-import { Scrollbar, Button } from '../index';
 import styled from 'styled-components';
+import { Button, Scrollbar } from '../index';
+import { cloneElement } from '../_util/reactNode';
 
 const PortalWrapper = styled(motion.div)`
   position: fixed;
@@ -16,7 +17,7 @@ const PortalWrapper = styled(motion.div)`
   left: 0;
   z-index: 999998;
   &.mask {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.65);
   }
   &.scroll {
     margin: 0 auto;
@@ -24,38 +25,32 @@ const PortalWrapper = styled(motion.div)`
   }
   > .inside {
     max-height: 88vh;
-    background: ${(props) => props.theme.modalColorPrimary};
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 9px 28px rgba(0, 0, 0, 0.05), 0px 12px 48px rgba(0, 0, 0, 0.03);
-    border-radius: 6px;
+    background: #242731;
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12),
+      0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
     overflow: hidden;
-    transition: all 0.3s ease-in-out;
     .header {
-      padding: 0 8px;
-      height: 54px;
-      border-bottom: 1px solid ${(props) => props.theme.lineColorSecond};
-      transition: all 0.3s ease-in-out;
+      padding: 0 24px;
+      height: 56px;
+      border-bottom: 1px solid #34384c;
       h4 {
-        flex: 1;
-        padding-left: 24px;
-        text-align: center;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 24px;
-        color: ${(props) => props.theme.textColorPrimary};
-        transition: all 0.3s ease-in-out;
+        font-weight: 600;
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.85);
       }
       .clear {
-        padding: 6px;
-        font-size: 12px;
-        font-weight: bold;
-        color: ${(props) => props.theme.textColorFourth};
+        padding: 4px;
+        width: 24px;
+        height: 24px;
+        fill: rgba(255, 255, 255, 0.45);
         border-radius: 50%;
         user-select: none;
         cursor: pointer;
         transition: all 0.3s ease-in-out;
         &:hover {
-          color: #00ba3d;
-          background: rgba(0, 186, 61, 0.1);
+          fill: #0e4bc3;
+          background: rgba(49, 110, 216, 0.1);
         }
       }
     }
@@ -65,14 +60,15 @@ const PortalWrapper = styled(motion.div)`
       }
     }
     .footer {
-      padding: 20px 20px 36px 20px;
-      button + button {
-        margin-left: 32px;
-      }
+      gap: 32px;
+      padding: 12px 24px 24px 24px;
     }
   }
 `;
 
+enum StyleType {
+  sex = 'sex',
+}
 export interface ModalProps {
   className?: string;
   visible?: boolean;
@@ -88,6 +84,7 @@ export interface ModalProps {
   children?: React.ReactNode;
   onCancel?: (...args: any[]) => any;
   onOk?: (...args: any[]) => any;
+  type?: StyleType;
 }
 
 const Portal: React.FC<ModalProps> = (props: ModalProps) => {
@@ -103,15 +100,16 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     children,
     onCancel,
     onOk,
+    type = StyleType.sex,
     ...rest
   } = props;
 
-  const classes = classNames(className, { 'col-center': true, mask, scroll });
+  const classes = classNames(`${className} ${type}`, { 'col-center': true, mask, scroll });
 
   const forceRef = React.useRef<HTMLDivElement>(null);
 
   const handleCancel = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    (e: React.MouseEvent<HTMLButtonElement | HTMLOrSVGElement>) => {
       onCancel?.(e);
     },
     [onCancel],
@@ -143,7 +141,7 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
     return (
       <div className="header row-between">
         <h4>{title}</h4>
-        {closable && <i className="iconfont icon-select-cancel clear" onClick={handleCancel} />}
+        {closable && <IconModalClose className="clear" onClick={handleCancel} />}
       </div>
     );
   }, [forceRender, forceRef, title, closable, handleCancel]);
@@ -171,8 +169,8 @@ const Portal: React.FC<ModalProps> = (props: ModalProps) => {
       <PortalWrapper className={classes} {...maskConfig}>
         <motion.div className="inside" {...modalConfig}>
           {renderHeader}
-          <div className="content" style={{ maxHeight: `calc(88vh - 152px - ${forceHeight}px)` }}>
-            <Scrollbar>{cloneElement(children)}</Scrollbar>
+          <div className="content" style={{ maxHeight: `calc(88vh - 132px - ${forceHeight}px)` }}>
+            <Scrollbar trackGap={[20, 20, 20, 20]}>{cloneElement(children)}</Scrollbar>
           </div>
           {renderFooter}
         </motion.div>

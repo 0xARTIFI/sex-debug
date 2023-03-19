@@ -5,8 +5,8 @@
   "scripts": {
     "start": "vite --open",
     "start:prod": "vite --open --mode production",
-    "build": "vite build --mode test",
-    "build:prod": "vite build --mode production",
+    "build": "tsc && vite build --mode production",
+    "build:test": "tsc && vite build --mode test",
     "preview": "vite preview",
     "lint": "yarn eslint && yarn prettier && yarn stylelint",
     "eslint": "eslint --cache '@(src)/**/*.@(js|jsx|ts|tsx)'",
@@ -21,6 +21,7 @@
     }
   },
   "dependencies": {
+    "charting_library": "file:public/charting_library",
     "ahooks": "^3.7.5",
     "bignumber.js": "^9.1.1",
     "classnames": "^2.3.2",

@@ -1,8 +1,10 @@
+import { message } from '@/components';
 import { exchangeContract } from '@/configs/common';
 import { recoilOptionEpochIds } from '@/models/_global';
 import { getOptionByPrice } from '@/services';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import useFetchOptionPositions from './useFetchOptionPositions';
 
@@ -38,15 +40,27 @@ const usePurchaseOption = () => {
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      throw Error(e);
+      throw Error(e?.message);
     }
   };
 
-  const props = useRequest(pucharseOption, {
+  const { run, loading, data, error } = useRequest(pucharseOption, {
     manual: true,
   });
 
-  return props;
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
+
+  return { run, loading, data, error };
 };
 
 export default usePurchaseOption;

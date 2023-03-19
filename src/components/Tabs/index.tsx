@@ -1,5 +1,5 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -11,15 +11,15 @@ const Wrapper = styled.div`
     li {
       white-space: nowrap;
       font-weight: 500;
-      color: ${(props) => props.theme.textColorThird};
+      color: #e5e6ed;
       user-select: none;
       cursor: pointer;
       transition: all 0.3s ease-in-out;
       &.active {
-        color: #00ba3d;
+        color: #0e4bc3;
       }
       &:not(.active):hover {
-        color: #00ba3d;
+        color: #0e4bc3;
       }
     }
   }
@@ -32,14 +32,14 @@ const Wrapper = styled.div`
   }
   .bar {
     height: 2px;
-    background: #00ba3d;
+    background: #0e4bc3;
     z-index: 1;
   }
   .line {
     right: 0;
     left: 0;
     height: 1px;
-    background: ${(props) => props.theme.lineColorSecond};
+    background: #34384c;
     transition: all 0.3s ease-in-out;
   }
   /* base */
@@ -82,12 +82,13 @@ export interface TabsProps {
   items?: TabsObjectType[];
   activeIndex?: number;
   onChange?: (...args: any[]) => any;
+  suffix?: React.ReactNode;
 }
 
 type PositionProps = Array<{ width: number; left: number }>;
 
 const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
-  const { className, size = 'md', underline = true, items = [], onChange, activeIndex } = props;
+  const { suffix, className, size = 'md', underline = true, items = [], onChange, activeIndex } = props;
 
   const tabsRef = React.useRef<HTMLDivElement>(null);
   const innerRef = React.useRef<HTMLUListElement>(null);
@@ -126,17 +127,20 @@ const Tabs: React.FC<TabsProps> = (props: TabsProps) => {
 
   return (
     <Wrapper className={classes} ref={tabsRef}>
-      <ul className="tab" ref={innerRef}>
-        {items.map((ele, index) => (
-          <li
-            className={`${tabActive === index ? 'active' : 'default'}`.trimEnd()}
-            key={ele.key}
-            onClick={() => handleChange(ele, index)}
-          >
-            {ele.name}
-          </li>
-        ))}
-      </ul>
+      <div className="row-between">
+        <ul className="tab" ref={innerRef}>
+          {items.map((ele, index) => (
+            <li
+              className={`${tabActive === index ? 'active' : 'default'}`.trimEnd()}
+              key={ele.key}
+              onClick={() => handleChange(ele, index)}
+            >
+              {ele.name}
+            </li>
+          ))}
+        </ul>
+        {suffix ? <div>{suffix}</div> : null}
+      </div>
       <hr className="bar" style={direction[tabActive]} />
       {underline && <hr className="line" />}
     </Wrapper>

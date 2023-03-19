@@ -19,6 +19,7 @@ const Wrapper = styled.button`
   }
   /* global */
   width: 100%;
+  box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.02);
   user-select: none;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
@@ -30,56 +31,52 @@ const Wrapper = styled.button`
   }
   /* base */
   &.primary {
-    background: #00ba3d;
+    background: #0e4bc3;
     span {
       color: #ffffff;
     }
     &:not(.loading, .disabled):hover {
-      background: #009230;
+      background: #316ed8;
     }
   }
   &.second {
-    background: rgba(0, 186, 61, 0.1);
+    background: #13b0a7;
     span {
-      color: #00ba3d;
+      color: #ffffff;
     }
     &:not(.loading, .disabled):hover {
-      background: rgba(0, 146, 48, 0.2);
+      background: #31c4b6;
     }
   }
   &.third {
-    background: ${(props) => props.theme.lineColorSecond};
-    transition: all 0.3s ease-in-out;
+    background: #d9224f;
     span {
-      color: ${(props) => props.theme.textColorPrimary};
-      transition: all 0.3s ease-in-out;
+      color: #ffffff;
     }
     &:not(.loading, .disabled):hover {
-      background: rgba(0, 186, 61, 0.1);
-      span {
-        color: #00ba3d;
-      }
+      background: #e94869;
     }
   }
   &.solid {
-    border: 1px solid #00ba3d;
+    border: 1px solid #34384c;
     span {
-      color: #00ba3d;
+      color: #e5e6ed;
     }
     &:not(.loading, .disabled):hover {
-      border: 1px solid #009230;
+      border: 1px solid #34384c;
       span {
-        color: #009230;
+        color: #316ed8;
       }
     }
   }
   &.text {
     span {
-      color: #00ba3d;
+      color: #e5e6ed;
     }
     &:not(.loading, .disabled):hover {
+      background: rgba(255, 255, 255, 0.12);
       span {
-        color: #009230;
+        color: #e5e6ed;
       }
     }
   }
@@ -95,36 +92,41 @@ const Wrapper = styled.button`
   &.disabled {
     border: none;
     cursor: not-allowed;
-    background: ${(props) => props.theme.disabledColorPrimary};
+    background: rgba(255, 255, 255, 0.08);
     span {
-      color: ${(props) => props.theme.textColorFifth};
+      color: rgba(255, 255, 255, 0.25);
     }
   }
   &.loading {
     cursor: not-allowed;
     svg {
       margin-right: 6px;
+      width: 16px;
+      height: 16px;
     }
   }
   &.sm {
-    min-width: 80px;
-    height: 30px;
-    border-radius: 4px;
+    padding: 0 8px;
+    height: 24px;
+    border-radius: 12px;
     span {
       font-size: 14px;
     }
   }
   &.md {
-    height: 38px;
-    border-radius: 5px;
+    padding: 0 16px;
+    height: 32px;
+    border-radius: 16px;
     span {
       font-size: 14px;
     }
   }
   &.lg {
-    height: 42px;
-    border-radius: 6px;
+    padding: 0 20px;
+    height: 40px;
+    border-radius: 20px;
     span {
+      font-weight: 600;
       font-size: 16px;
     }
   }
@@ -169,17 +171,6 @@ const Button: React.FC<ButtonProps> = React.forwardRef((props: ButtonProps, ref:
     disabled,
   });
 
-  const loadingColor = React.useMemo(() => {
-    switch (type) {
-      case 'primary':
-        return '#ffffff';
-      case 'danger':
-        return '#ee6929';
-      default:
-        return '#00BA3D';
-    }
-  }, [type]);
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement, MouseEvent>) => {
     if (loading || disabled) {
       e.preventDefault();
@@ -191,7 +182,7 @@ const Button: React.FC<ButtonProps> = React.forwardRef((props: ButtonProps, ref:
   return (
     <Wrapper className={classes} ref={ref} onClick={handleClick} {...rest}>
       {prefix}
-      {!disabled && loading && <IconGlobalSpin color={loadingColor} />}
+      {!disabled && loading && <IconGlobalSpin color="#ffffff" />}
       <span>{cloneElement(children)}</span>
       {suffix}
     </Wrapper>

@@ -1,13 +1,15 @@
+import { message } from '@/components';
 import { exchangeContract } from '@/configs/common';
 import { recoilOptionEpochIds } from '@/models/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import useFetchOptionPositions from './useFetchOptionPositions';
 
 const useOptionReedem = () => {
   const { startEpochId, endEpochId } = useRecoilValue(recoilOptionEpochIds);
-  const { run } = useFetchOptionPositions();
+  const { run: fetchOptionPositionRun } = useFetchOptionPositions();
 
   const redeem = async (epochIds: string | string[], productIds: string | string[]) => {
     const epo = Array.isArray(epochIds) ? epochIds : [epochIds];
@@ -27,15 +29,28 @@ const useOptionReedem = () => {
       console.log('config', config);
       const tx = await writeContract(config);
       const res = await tx.wait();
-      run({ to: endEpochId });
+      fetchOptionPositionRun({ to: endEpochId });
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      throw Error(e);
+      throw Error(e?.message);
     }
   };
 
-  const props = useRequest(redeem, { manual: true });
-  return props;
+  const { run, loading, data, error } = useRequest(redeem, { manual: true });
+
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
+
+  return { run, loading, data, error };
 };
 export default useOptionReedem;

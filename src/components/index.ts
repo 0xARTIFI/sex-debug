@@ -19,13 +19,13 @@ export type { ButtonProps } from './Button';
 export { default as Input } from './Input';
 export type { InputProps } from './Input';
 
-// export { default as message } from './Message';
+export { default as message } from './Message';
 
-// export { default as Modal } from './Modal';
-// export type { ModalProps } from './Modal';
+export { default as Modal } from './Modal';
+export type { ModalProps } from './Modal';
 
-// export { default as Pagination } from './Pagination';
-// export type { PaginationProps } from './Pagination';
+export { default as Pagination } from './Pagination';
+export type { PaginationProps } from './Pagination';
 
 // export { default as Radio } from './Radio';
 // export type { RadioProps } from './Radio';
@@ -42,11 +42,11 @@ export type { SliderProps } from './Slider';
 // export { default as Switch } from './Switch';
 // export type { SwitchProps } from './Switch';
 
-// export { default as Table } from './Table';
-// export type { TableProps } from './Table';
+export { default as Table } from './Table';
+export type { TableProps } from './Table';
 
-// export { default as Tabs } from './Tabs';
-// export type { TabsProps } from './Tabs';
+export { default as Tabs } from './Tabs';
+export type { TabsProps } from './Tabs';
 
 // export { default as Tooltip } from './Tooltip';
 // export type { TooltipProps } from './Tooltip';

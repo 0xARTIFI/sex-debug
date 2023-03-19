@@ -70,13 +70,26 @@ const useFetchOptionPositions = () => {
       setSettledOptionPositions(position.filter((i) => i?.isSettle));
       setUnsettledOptionPositions(position.filter((i) => !i?.isSettle));
       return position;
-    } catch (e) {
+    } catch (e: any) {
       console.log('e,', e);
-      return null;
+      throw new Error(e?.message);
     }
   };
 
-  const props = useRequest(fetchPosition, { manual: true });
-  return props;
+  const { run, loading, data, error } = useRequest(fetchPosition, { manual: true });
+
+  // useEffect(() => {
+  //   if (data) {
+  //     message.success('Success');
+  //   }
+  // }, [data]);
+
+  // useEffect(() => {
+  //   if (error) {
+  //     message.error(error?.message);
+  //   }
+  // }, [error]);
+
+  return { run, loading, data, error };
 };
 export default useFetchOptionPositions;

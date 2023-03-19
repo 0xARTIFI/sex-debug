@@ -2,8 +2,9 @@
 import Button from '@/components/Button';
 import useAuth from '@/hooks/useAuth';
 import useChainWatcher from '@/hooks/useChainWatcher';
+import { useMemo } from 'react';
 
-const SmartButton = ({ children, onClick, loading, ...props }: any) => {
+const SmartButton = ({ children, onClick, loading, disabled, ...props }: any) => {
   const { setupNetwork, unsupported, isLoading } = useChainWatcher();
   const { isConnected, connect } = useAuth();
 
@@ -18,8 +19,13 @@ const SmartButton = ({ children, onClick, loading, ...props }: any) => {
     }
     onClick && onClick(e);
   };
+
+  const curDisabled = useMemo(() => {
+    if (!isConnected) return false;
+    return disabled;
+  }, [disabled, isConnected]);
   return (
-    <Button {...props} onClick={handleClick} loading={isLoading || loading}>
+    <Button {...props} onClick={handleClick} loading={isLoading || loading} disabled={curDisabled}>
       {!isConnected ? 'Conenct' : unsupported ? 'Switch Network' : children}
     </Button>
   );

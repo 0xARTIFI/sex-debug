@@ -1,23 +1,20 @@
 /* eslint-disable @iceworks/best-practices/recommend-functional-component */
-/* eslint-disable @typescript-eslint/member-ordering */
 import * as React from 'react';
-import { fadeConfig } from '@/configs/motion';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { NotificationStackItemProps } from './PropsType';
 
 export default class StackItem extends React.Component<NotificationStackItemProps, {}> {
-  static defaultProps = {
-    stayTime: 5_000,
-  };
-  private timeout: number;
+  static defaultProps = { stayTime: 3_000 };
   state = { visible: false };
+
+  private timeout = 3_000;
 
   componentDidMount() {
     this.setState({ visible: true });
     this.startTimer();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: NotificationStackItemProps) {
     const { stayTime } = prevProps;
     const { stayTime: newTime } = this.props;
     if (stayTime !== newTime) {
@@ -53,9 +50,7 @@ export default class StackItem extends React.Component<NotificationStackItemProp
     return (
       <AnimatePresence>
         {visible && (
-          <motion.div {...fadeConfig}>
-            <Component {...rest} onMouseEnter={this.stopTimer} onMouseLeave={this.startTimer} onClose={this.close} />
-          </motion.div>
+          <Component {...rest} onMouseEnter={this.stopTimer} onMouseLeave={this.startTimer} onClose={this.close} />
         )}
       </AnimatePresence>
     );

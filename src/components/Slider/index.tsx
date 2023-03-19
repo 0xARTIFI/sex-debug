@@ -1,24 +1,23 @@
-import * as React from 'react';
 import classNames from 'classnames';
+import * as React from 'react';
+import styled from 'styled-components';
 import useDrag from './hooks/useDrag';
 import useOffset from './hooks/useOffset';
-import styled from 'styled-components';
 
 const Wrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 20px;
-  padding: 8.5px 0;
-  border-radius: 3px;
+  height: 12px;
+  padding: 2px 0;
+  border-radius: 6px;
   touch-action: none;
   .rail {
     position: absolute;
     width: 100%;
-    height: 3px;
-    background: ${(props) => props.theme.lineColorSecond};
+    height: 8px;
+    background: #323a4f;
     transition: all 0.3s ease-in-out;
-    border-radius: 3px;
-    /* user-select: none; */
+    border-radius: 4px;
     .mark {
       width: 8px;
       height: 8px;
@@ -26,27 +25,25 @@ const Wrapper = styled.div`
       pointer-events: none;
       transition: all 0.3s ease-in-out;
     }
-    .mark:first-child {
-      transform: translateX(-4px);
-    }
-    .mark:last-child {
-      transform: translateX(4px);
-    }
     .mark-active {
-      background: #00ba3d;
-      border: 1px solid #00ba3d;
+      width: 4px;
+      height: 10px;
+      background: #54678b;
+      border-radius: 3px;
     }
     .mark-default {
-      background: ${(props) => props.theme.backgroundColorPrimary};
-      border: 1px solid ${(props) => props.theme.sliderBorderPrimary};
+      width: 4px;
+      height: 10px;
+      background: #54678b;
+      border-radius: 3px;
     }
   }
   .track {
     position: absolute;
     left: 0;
-    height: 3px;
-    background: #00ba3d;
-    border-radius: 3px;
+    height: 8px;
+    background: linear-gradient(90deg, #fa2256 1.32%, #11cabf 50.66%, #fa2256 100%);
+    border-radius: 4px;
     /* &.track-anime {
       transition: all 0.3s ease-in-out;
     } */
@@ -55,28 +52,27 @@ const Wrapper = styled.div`
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 20px;
-    height: 20px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: #00ba3d;
-    border: 3px solid ${(props) => props.theme.backgroundColorThird};
-    /* box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.05); */
+    background: #9cadcd;
+    border: 3px solid #e5e6ed;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
-    outline: 1px solid transparent;
     touch-action: pan-x;
     cursor: pointer;
     cursor: grab;
     transition: border-color 0.3s ease-in-out, outline 0.3s ease-in-out;
-    z-index: 2;
+    z-index: 1;
     &:hover {
-      outline: 1px solid #00ba3d;
+      border: 3px solid #316ed8;
     }
   }
   .handle:hover + .tooltip {
     display: block;
   }
   .dragging {
-    outline: 1px solid #00ba3d;
+    border: 3px solid #316ed8;
+    outline: 1px solid #0e4bc3;
   }
   .dragging + .tooltip {
     display: block;
@@ -84,18 +80,18 @@ const Wrapper = styled.div`
   .tooltip {
     display: none;
     position: absolute;
-    top: -26px;
-    width: 40px;
-    height: 20px;
-    background: ${(props) => props.theme.backgroundColorThird};
-    border: 1px solid ${(props) => props.theme.lineColorSecond};
-    box-shadow: ${(props) => props.theme.boxShadowColorPrimary};
-    border-radius: 4px;
+    bottom: -28px;
+    padding: 0 4px;
+    height: 22px;
+    background: #323a4f;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
     white-space: nowrap;
     text-align: center;
+    font-weight: 500;
     font-size: 12px;
-    line-height: 18px;
-    color: ${(props) => props.theme.textColorPrimary};
+    line-height: 22px;
+    color: #e5e6ed;
     z-index: 10;
   }
   .disabled {
@@ -193,7 +189,13 @@ const Slider = (props: SliderProps) => {
   return (
     <Wrapper className={className} ref={sliderRef} onMouseDown={onSliderMouseDown}>
       <div className="rail row-between">{sliderMarks}</div>
-      <div className="track" style={{ width: `${track}%` }} />
+      <div
+        className="track"
+        style={{
+          width: '100%',
+          clipPath: `inset(0px ${100 - track}% 0px 0px)`,
+        }}
+      />
       <div
         className={classNames('handle', { dragging: draggingIndex === 0 })}
         style={{ left: `${track}%` }}

@@ -1,9 +1,11 @@
+import { message } from '@/components';
 import { exchangeContract, TRADE_TOKEN } from '@/configs/common';
 import { getSignatureAndPrice } from '@/services';
 import { USDCAmount, WETHAmount } from '@/typings/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
+import { useEffect } from 'react';
 import useLpTokenBalance from './useLpTokenBalance';
 
 // todo currencyType
@@ -34,13 +36,26 @@ const useLpWithdraw = () => {
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      return e?.message;
+      throw new Error(e?.message);
     }
   };
 
   const { run, loading, data, error } = useRequest(handleDeposit, {
     manual: true,
   });
+
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
+
   return { run, loading, data, error };
 };
 

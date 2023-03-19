@@ -1,7 +1,7 @@
 import { TraderAssets, WalletModal } from '@/components/_global';
 import { styled } from 'styled-components';
 import Option from '../Option_Old';
-import Perpetual from '../Perpetual';
+import Perpetual from '../Perpetual_Old';
 import Stake from '../Stake';
 
 const Wrapper = styled.div`

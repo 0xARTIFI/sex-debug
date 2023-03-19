@@ -1,8 +1,10 @@
+import { message } from '@/components';
 import { exchangeContract, TRADE_TOKEN } from '@/configs/common';
 import { USDCAmount, WETHAmount } from '@/typings/_global';
 import { prepareWriteContract, writeContract } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
+import { useEffect } from 'react';
 import useApprove from '../useApprove';
 import useBalances from '../useBalances';
 
@@ -15,10 +17,12 @@ const useTraderDeposit = () => {
     // if (!args?.length) return new Error('Invalid Parameters');
     const decimal = inputToken === TRADE_TOKEN.USDC ? 6 : 18;
     const inputValue = ethers.utils.parseUnits(args, decimal).toString();
+    // 系统需要6位，链上是18位
+    const allowanceinputValue = ethers.utils.parseUnits(args, 18).toString();
 
     try {
       // 检查allowance
-      await approveRun(inputToken, exchangeContract.address, inputValue);
+      await approveRun(inputToken, exchangeContract.address, allowanceinputValue);
 
       const config = await prepareWriteContract({
         ...exchangeContract,
@@ -31,13 +35,26 @@ const useTraderDeposit = () => {
       return res;
     } catch (e: any) {
       console.log('e', e?.message);
-      return e?.message;
+      throw new Error(e?.message);
     }
   };
 
   const { run, loading, data, error } = useRequest(handleDeposit, {
     manual: true,
   });
+
+  useEffect(() => {
+    if (data) {
+      message.success('Success');
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error?.message);
+    }
+  }, [error]);
+
   return { run, loading, data, error };
 };
 

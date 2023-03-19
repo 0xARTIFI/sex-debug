@@ -1,19 +1,10 @@
 import * as React from 'react';
+import { fadeConfig } from '@/configs/motion';
+import { motion } from 'framer-motion';
 import { NotificationProps } from './PropsType';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled from 'styled-components';
 
-const GlobalStyle = createGlobalStyle`
-  #stack-dom {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 0;
-    z-index: 999999;
-  }
-`;
-
-const Wrapper = styled.div<{ isDark: boolean }>`
+const Wrapper = styled(motion.div)<{ isDark: boolean }>`
   margin: 24px auto 0 auto;
   padding: 20px;
   width: max-content;
@@ -52,13 +43,10 @@ const Message: React.FC<NotificationProps> = React.forwardRef(
     const localeTheme = window.localStorage.getItem('ice_theme') === '"dark"';
 
     return (
-      <React.Fragment>
-        <GlobalStyle />
-        <Wrapper ref={ref} isDark={localeTheme} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-          <i className={`iconfont icon-${icon}`} />
-          <span>{content}</span>
-        </Wrapper>
-      </React.Fragment>
+      <Wrapper ref={ref} isDark={localeTheme} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...fadeConfig}>
+        <i className={`iconfont icon-${icon}`} />
+        <span>{content}</span>
+      </Wrapper>
     );
   },
 );

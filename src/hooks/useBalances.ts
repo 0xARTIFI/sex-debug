@@ -1,5 +1,5 @@
-import { BalancesEnum, exchangeContract, USDCContract, WETHContract } from '@/configs/common';
-import { recoilBalances } from '@/models/_global';
+import { AllowancesEnum, BalancesEnum, exchangeContract, USDCContract, WETHContract } from '@/configs/common';
+import { recoilAllowance, recoilBalances } from '@/models/_global';
 import { Address, fetchBalance, multicall } from '@wagmi/core';
 import { useRequest } from 'ahooks';
 import { ethers } from 'ethers';
@@ -12,6 +12,7 @@ import { useAccount } from 'wagmi';
 const useBalances = () => {
   const { address } = useAccount();
   const setBalances = useSetRecoilState(recoilBalances);
+  const setAllowance = useSetRecoilState(recoilAllowance);
 
   const balancesCall = async () => {
     return Promise.all([
@@ -36,6 +37,16 @@ const useBalances = () => {
             ...exchangeContract,
             functionName: 'traderBalanceWETH',
             args: [address],
+          },
+          {
+            ...USDCContract,
+            functionName: 'allowance',
+            args: [address as Address, exchangeContract.address],
+          },
+          {
+            ...WETHContract,
+            functionName: 'allowance',
+            args: [address as Address, exchangeContract.address],
           },
         ],
       }),
@@ -77,6 +88,9 @@ const useBalances = () => {
     const traderBalanceUSDC = ethers.BigNumber.from(data[0][2]).toString();
     const traderBalanceWETH = ethers.BigNumber.from(data[0][3]).toString();
 
+    const usdcAllowance = ethers.BigNumber.from(data[0][4]).toString();
+    const wethAllowance = ethers.BigNumber.from(data[0][5]).toString();
+
     const ethBalance = data[1]?.formatted;
     setBalances((old) => {
       const _old = JSON.parse(JSON.stringify(old));
@@ -89,7 +103,16 @@ const useBalances = () => {
         [BalancesEnum.USDC_IN_ACCOUNT]: traderBalanceUSDC,
       };
     });
-  }, [data, setBalances]);
+
+    setAllowance((old) => {
+      const _old = JSON.parse(JSON.stringify(old));
+      return {
+        ..._old,
+        [AllowancesEnum.USDC_IN_WALLET_ALLOWANCE]: usdcAllowance,
+        [AllowancesEnum.WETH_IN_WALLET_ALLOWANCE]: wethAllowance,
+      };
+    });
+  }, [data, setAllowance, setBalances]);
 
   // useEffect(() => {
   //   if (address && !hasRuned) {

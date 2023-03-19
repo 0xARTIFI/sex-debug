@@ -1,11 +1,12 @@
-import * as React from 'react';
-import classNames from 'classnames';
-import { LiteralUnion } from '../_type/type';
 import useRandomId from '@/hooks/useRandomId';
+import classNames from 'classnames';
+import * as React from 'react';
 import styled from 'styled-components';
+import { LiteralUnion } from '../_type/type';
 
 const Wrapper = styled.div`
   position: relative;
+  background: rgba(47, 50, 65, 0.5);
   transition: all 0.3s ease-in-out;
   /* 清除默认样式 */
   input {
@@ -16,7 +17,7 @@ const Wrapper = styled.div`
     background: transparent;
     appearance: none;
     -webkit-appearance: none;
-    color: ${(props) => props.theme.textColorPrimary};
+    color: #e5e6ed;
     transition: all 0.3s ease-in-out;
     &:focus {
       outline: none;
@@ -25,14 +26,14 @@ const Wrapper = styled.div`
     flex: auto;
     height: inherit;
     &::placeholder {
-      color: ${(props) => props.theme.textColorFourth};
+      color: rgba(255, 255, 255, 0.25);
       transition: all 0.3s ease-in-out;
     }
   }
   /* chrome autocomplete background color */
   input:-webkit-autofill,
   input:-webkit-autofill:focus {
-    -webkit-text-fill-color: ${(props) => props.theme.textColorPrimary};
+    -webkit-text-fill-color: #e5e6ed;
     transition: background-color 99999s 0s, color 99999s 0s;
   }
   /* input[data-autocompleted] {
@@ -46,26 +47,29 @@ const Wrapper = styled.div`
     top: 0;
     bottom: 0;
     pointer-events: none;
-    border: 1px solid ${(props) => props.theme.lineColorPrimary};
+    border: 1px solid #34384c;
+    /* background: rgba(47, 50, 65, 0.5); */
     transition: all 0.3s ease-in-out;
   }
-  &:not(.danger, .disabled):hover label,
-  input:focus + label {
-    border: 1px solid #00ba3d;
+  &:not(.danger, .disabled):hover label {
+    border: 1px solid #316ed8;
+  }
+  &:not(.danger, .disabled) input:focus + label {
+    border: 1px solid #0e4bc3;
   }
   .clear {
     padding: 6px;
     font-size: 12px;
     font-weight: bold;
-    color: ${(props) => props.theme.textColorPrimary};
+    color: #e5e6ed;
     border-radius: 50%;
     user-select: none;
     cursor: pointer;
     transform: scale(0.8);
     transition: all 0.3s ease-in-out;
     &:hover {
-      color: #00ba3d;
-      background: rgba(0, 186, 61, 0.1);
+      color: #316ed8;
+      background: rgba(49, 110, 216, 0.1);
     }
   }
   /* base */
@@ -78,53 +82,56 @@ const Wrapper = styled.div`
       border: 1px solid #ff7878;
     }
   }
-  &.disabled {
+  &.disabled:not(.keep-style) {
     user-select: none;
     cursor: not-allowed;
     input {
-      color: ${(props) => props.theme.textColorFifth};
+      color: rgba(255, 255, 255, 0.25);
       cursor: not-allowed;
       z-index: 1;
       transition: all 0.3s ease-in-out;
       &::placeholder {
-        color: ${(props) => props.theme.textColorFifth};
+        color: rgba(255, 255, 255, 0.25);
         transition: all 0.3s ease-in-out;
       }
     }
     label {
-      background: ${(props) => props.theme.disabledColorPrimary};
+      background: rgba(255, 255, 255, 0.08);
       transition: all 0.3s ease-in-out;
     }
   }
   &.sm {
     padding: 0 8px;
-    min-width: 80px;
-    height: 30px;
+    height: 24px;
+    border-radius: 12px;
     input {
-      font-size: 12px;
+      font-size: 14px;
     }
     label {
-      border-radius: 4px;
+      border-radius: 12px;
     }
   }
   &.md {
-    padding: 0 10px;
-    height: 38px;
+    padding: 0 16px;
+    height: 32px;
+    border-radius: 16px;
     input {
-      font-size: 12px;
+      font-size: 14px;
     }
     label {
-      border-radius: 5px;
+      border-radius: 16px;
     }
   }
   &.lg {
-    padding: 0 12px;
-    height: 42px;
+    padding: 0 20px;
+    height: 40px;
+    border-radius: 20px;
     input {
+      font-weight: 600;
       font-size: 16px;
     }
     label {
-      border-radius: 6px;
+      border-radius: 20px;
     }
   }
 `;

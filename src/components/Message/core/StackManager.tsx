@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import * as React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import StackItem from './StackItem';
 import { NotificationProps, NotificationReturnInstance } from './PropsType';
 
@@ -9,23 +8,10 @@ export default class StackManager {
   private component: React.FunctionComponent<NotificationProps>;
   private keySeed = 0;
 
+  private root = ReactDOM.createRoot(this.getContainerDom(true) as HTMLElement);
+
   constructor(component: React.FunctionComponent<NotificationProps>) {
     this.component = component;
-  }
-
-  private render() {
-    const list = this.notifyList;
-    ReactDOM.render(<>{list}</>, this.getContainerDom(true));
-  }
-
-  private getContainerDom(create?: boolean) {
-    let div = window.document.querySelector('#stack-dom');
-    if (!div && create) {
-      div = window.document.createElement('div');
-      div.id = 'stack-dom';
-      window.document.body.appendChild(div);
-    }
-    return div as HTMLDivElement;
   }
 
   // To display a new StackItem
@@ -65,8 +51,23 @@ export default class StackManager {
     this.notifyList.length = 0;
     const div = this.getContainerDom();
     if (div) {
-      ReactDOM.unmountComponentAtNode(div);
+      this.root.unmount();
       window.document.body.removeChild(div);
     }
+  }
+
+  private render() {
+    const list = this.notifyList;
+    this.root.render(<>{list}</>);
+  }
+
+  private getContainerDom(create?: boolean) {
+    let div = window.document.querySelector('#stack-dom');
+    if (!div && create) {
+      div = window.document.createElement('div');
+      div.id = 'stack-dom';
+      window.document.body.appendChild(div);
+    }
+    return div as HTMLDivElement;
   }
 }

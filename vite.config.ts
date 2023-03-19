@@ -1,9 +1,9 @@
-import { defineConfig, Logger, createLogger } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import { createMpaPlugin } from 'vite-plugin-virtual-mpa';
-import vitePluginRequire from 'vite-plugin-require';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { fileURLToPath, URL } from 'node:url';
+import { createLogger, defineConfig, Logger } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import vitePluginRequire from 'vite-plugin-require';
+import { createMpaPlugin } from 'vite-plugin-virtual-mpa';
 
 const customLogger = (): Logger => {
   const logger = createLogger();
@@ -26,7 +26,7 @@ export default defineConfig({
       verbose: false,
       template: 'public/index.html',
       pages: [{ name: 'index', filename: 'index.html' }],
-      rewrites: [{ from: /.*/, to: '/public/index.html' }],
+      rewrites: [{ from: /^(?!.*charting_library).*$/i, to: '/public/index.html' }],
     }),
     vitePluginRequire(),
     nodePolyfills({ protocolImports: true }),
