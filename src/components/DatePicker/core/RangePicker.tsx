@@ -1,8 +1,6 @@
+import dayjs, { Dayjs } from 'dayjs';
 import * as React from 'react';
 import Calendar from './DatePicker';
-import { useRecoilValue } from 'recoil';
-import { recoilLocale } from '@/models/_global';
-import dayjs, { Dayjs } from 'dayjs';
 
 import localeEn from 'dayjs/locale/en';
 import localeEs from 'dayjs/locale/es';
@@ -21,7 +19,7 @@ export interface RangeCalendarProps {
 
 const RangeCalendar = (props: RangeCalendarProps) => {
   const { value = [], onChange } = props;
-  const locale = useRecoilValue(recoilLocale);
+  const locale = 'en-US';
 
   const now = dayjs(value[0]).locale(LOCALE_DAYJS[locale]);
   const next = now.add(1, 'month');

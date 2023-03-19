@@ -1,8 +1,6 @@
 /* eslint-disable react/no-array-index-key */
-import * as React from 'react';
 import classNames from 'classnames';
-import { useRecoilValue } from 'recoil';
-import { recoilLocale } from '@/models/_global';
+import * as React from 'react';
 import styled from 'styled-components';
 
 import dayjs, { Dayjs } from 'dayjs';
@@ -11,9 +9,9 @@ import localeEn from 'dayjs/locale/en';
 import localeEs from 'dayjs/locale/es';
 import localePt from 'dayjs/locale/pt';
 
-import weekday from 'dayjs/plugin/weekday';
-import toObject from 'dayjs/plugin/toObject';
 import isToday from 'dayjs/plugin/isToday';
+import toObject from 'dayjs/plugin/toObject';
+import weekday from 'dayjs/plugin/weekday';
 
 dayjs.extend(weekday);
 dayjs.extend(toObject);
@@ -262,7 +260,7 @@ type WeekType = DayType[];
 
 const Calendar = (props: CalendarProps) => {
   const { value, onChange, isForRange, rangeDateList, hoverRangeDateList, onChangeMonth, onOver, propMonth } = props;
-  const locale = useRecoilValue(recoilLocale);
+  const locale = 'en-US';
 
   const defaultMonth = (value ? dayjs(value) : dayjs()).locale(LOCALE_DAYJS[locale]);
   const [currentMonth, setCurrentMonth] = React.useState<Dayjs>(propMonth || defaultMonth);
