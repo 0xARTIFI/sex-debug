@@ -16,6 +16,7 @@ import ConfirmCloseModal from '../ConfirmCloseModal';
 
 const Container = styled.li`
   .position {
+    height: 52px;
     align-items: center;
     .align-start {
       align-items: flex-start;
@@ -64,7 +65,7 @@ const Positions = ({ ele, indexPrice }: { ele: SinglePositionInterface; indexPri
   return (
     <>
       <Container className="row-start">
-        <p className="row-start  position gap-8">
+        <p className="row-start  position ">
           <img src={curToken?.image} alt="coin" />
           <span className="col-start gap-8 align-start">
             <span>{curToken?.label}</span>
